@@ -20,4 +20,6 @@ dependencies {
     implementation(Dependencies.Observability.MICROMETER_PROMETHEUS)
 
     testImplementation(Dependencies.Test.SPRING_BOOT_TEST)
+    testImplementation(Dependencies.Test.KOTEST_EXTENSIONS_SPRING)
+    testImplementation(Dependencies.Test.COROUTINES_TEST)
 }

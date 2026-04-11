@@ -17,4 +17,11 @@ dependencies {
     implementation(Dependencies.Ktor.CLIENT_CONTENT_NEGOTIATION)
     implementation(Dependencies.Ktor.SERIALIZATION_JACKSON)
     implementation(Dependencies.Ktor.CLIENT_LOGGING)
+
+    // Test — Testcontainers + Kafka
+    testImplementation(platform(Dependencies.Test.TESTCONTAINERS_BOM))
+    testImplementation(Dependencies.Test.TESTCONTAINERS_JUNIT)
+    testImplementation(Dependencies.Test.TESTCONTAINERS_KAFKA)
+    testImplementation(Dependencies.Test.SPRING_KAFKA_TEST)
+    testImplementation(Dependencies.Test.KTOR_CLIENT_MOCK)
 }

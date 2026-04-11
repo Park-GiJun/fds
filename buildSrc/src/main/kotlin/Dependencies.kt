@@ -58,5 +58,29 @@ object Dependencies {
         const val SPRING_BOOT_TEST = "org.springframework.boot:spring-boot-starter-test"
         const val KOTLIN_TEST = "org.jetbrains.kotlin:kotlin-test-junit5"
         const val JUNIT_LAUNCHER = "org.junit.platform:junit-platform-launcher"
+
+        // MockK
+        const val MOCKK = "io.mockk:mockk:${Versions.MOCKK}"
+
+        // Kotest
+        const val KOTEST_RUNNER = "io.kotest:kotest-runner-junit5:${Versions.KOTEST}"
+        const val KOTEST_ASSERTIONS = "io.kotest:kotest-assertions-core:${Versions.KOTEST}"
+        const val KOTEST_PROPERTY = "io.kotest:kotest-property:${Versions.KOTEST}"
+        const val KOTEST_EXTENSIONS_SPRING = "io.kotest.extensions:kotest-extensions-spring:2.0.0"
+
+        // Coroutines Test
+        const val COROUTINES_TEST = "org.jetbrains.kotlinx:kotlinx-coroutines-test"
+
+        // Ktor Client Mock
+        const val KTOR_CLIENT_MOCK = "io.ktor:ktor-client-mock:${Versions.KTOR}"
+
+        // Testcontainers
+        const val TESTCONTAINERS_BOM = "org.testcontainers:testcontainers-bom:${Versions.TESTCONTAINERS}"
+        const val TESTCONTAINERS_JUNIT = "org.testcontainers:junit-jupiter"
+        const val TESTCONTAINERS_POSTGRESQL = "org.testcontainers:postgresql"
+        const val TESTCONTAINERS_KAFKA = "org.testcontainers:kafka"
+
+        // Spring Kafka Test
+        const val SPRING_KAFKA_TEST = "org.springframework.kafka:spring-kafka-test"
     }
 }

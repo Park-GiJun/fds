@@ -42,6 +42,18 @@
 - 에이전트 "강민재" (Gate Keeper) — merge 전 체크리스트 검증
 - 이슈 자동 연결 + PR 코멘트 + merge 후 브랜치 삭제
 
+### `/test` — 테스트 코드 자동 생성
+변경된 코드 또는 지정 파일에 대해 테스트 코드를 자동 생성한다.
+- `/test` — 최근 커밋 변경 파일의 테스트 생성
+- `/test {파일경로}` — 특정 파일 테스트 생성
+- `/test --module {모듈명}` — 모듈 전체 테스트 생성
+- `/test --setup` — 테스트 인프라 세팅만 (의존성, 설정 파일)
+- 에이전트 "김태현" (Test Strategist) — 테스트 전략 수립 + 케이스 설계
+- 에이전트 "이수빈" (Test Engineer) — 단위 테스트 작성 (Kotest + MockK)
+- 에이전트 "박준영" (Integration Specialist) — 통합 테스트 (Testcontainers)
+- 테스트 프레임워크: Kotest 6 + MockK + Testcontainers
+- 빌드 + 테스트 실행 후 결과 보고
+
 ### `/create-issue-branch` — 이슈 기반 브랜치 생성
 이슈 번호를 받아 라벨 기반 prefix + slug로 브랜치를 자동 생성한다.
 - `/create-issue-branch 1` — 단일 이슈 브랜치
@@ -75,6 +87,13 @@
 | 최민준 | Tech Lead | Reviewer 1~3 종합, 기술 심각도, 반복 실수 추적 | project-context, review-checklist |
 | 한소율 | Quality Lead | Reviewer 4~6 종합, 품질 심각도, 학습 추출 | domain-glossary, review-checklist |
 
+**테스트 에이전트**
+| 이름 | 역할 | 담당 커맨드 |
+|------|------|------------|
+| 김태현 | Test Strategist | `/test` — 전략 수립, 케이스 설계 (리뷰 겸임) |
+| 이수빈 | Test Engineer | `/test` — 단위 테스트 작성 (Kotest + MockK) |
+| 박준영 | Integration Specialist | `/test` — 통합 테스트 (Testcontainers) |
+
 **Git 워크플로우 에이전트**
 | 이름 | 역할 | 담당 커맨드 |
 |------|------|------------|
@@ -89,6 +108,9 @@
          │
          ▼
     코딩 작업
+         │
+         ▼
+    /test                        ← 김태현+이수빈+박준영: 테스트 자동 생성
          │
          ▼
     /commit                      ← 송준호: 커밋 메시지 생성 + 빌드 검증

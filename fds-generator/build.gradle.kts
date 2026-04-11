@@ -12,4 +12,7 @@ dependencies {
     implementation(Dependencies.Ktor.CLIENT_CONTENT_NEGOTIATION)
     implementation(Dependencies.Ktor.SERIALIZATION_JACKSON)
     implementation(Dependencies.Ktor.CLIENT_LOGGING)
+
+    // Test — Ktor Client Mock
+    testImplementation(Dependencies.Test.KTOR_CLIENT_MOCK)
 }

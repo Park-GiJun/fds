@@ -20,6 +20,10 @@ dependencies {
     implementation(Dependencies.Kotlin.REFLECT)
 
     testImplementation(Dependencies.Test.KOTLIN_TEST)
+    testImplementation(Dependencies.Test.MOCKK)
+    testImplementation(Dependencies.Test.KOTEST_RUNNER)
+    testImplementation(Dependencies.Test.KOTEST_ASSERTIONS)
+    testImplementation(Dependencies.Test.KOTEST_PROPERTY)
     testRuntimeOnly(Dependencies.Test.JUNIT_LAUNCHER)
 }
 
