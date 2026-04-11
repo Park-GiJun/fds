@@ -440,11 +440,11 @@ Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>"
 
 ### Step 8: GitHub 이슈 자동 등록
 
-리뷰 결과의 **Action Items**(즉시 수정)과 **Critical/High Tech Debt**를 GitHub 이슈로 자동 등록한다.
+리뷰 결과의 **Action Items**(즉시 수정)과 **모든 심각도의 Tech Debt**(LOW 포함)를 GitHub 이슈로 자동 등록한다.
 
 **이슈 생성 규칙:**
 - Action Items → 라벨 `review-action` + 해당 카테고리 라벨 + 심각도 라벨
-- Tech Debt (Critical/High만) → 라벨 `tech-debt` + 해당 카테고리 라벨
+- Tech Debt (LOW 포함 전체) → 라벨 `tech-debt` + 해당 카테고리 라벨 + 심각도 라벨
 - 마일스톤: 현재 진행 중인 Phase에 할당
 - 이미 동일 제목의 이슈가 열려있으면 중복 생성하지 않음 (검색 후 확인)
 
