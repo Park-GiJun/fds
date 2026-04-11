@@ -10,6 +10,6 @@ import org.springframework.context.annotation.Configuration
 class GeneratorBeanConfig {
 
     @Bean(destroyMethod = "shutdown")
-    fun generatorService(transactionSendPort: TransactionSendPort): GeneratorUseCase =
+    fun generatorHandler(transactionSendPort: TransactionSendPort): GeneratorUseCase =
         GeneratorHandler(transactionSendPort)
 }

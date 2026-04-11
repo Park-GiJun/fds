@@ -1,4 +1,4 @@
-package com.gijun.fds.generator.infrastructure.adapter.out.client
+package com.gijun.fds.generator.infrastructure.adapter.outbound.client
 
 import com.gijun.fds.generator.domain.model.CardNumber
 import com.gijun.fds.generator.domain.model.TransactionData

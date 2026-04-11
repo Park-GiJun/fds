@@ -1,4 +1,4 @@
-package com.gijun.fds.generator.infrastructure.adapter.out.client.dto
+package com.gijun.fds.generator.infrastructure.adapter.outbound.client.dto
 
 import java.math.BigDecimal
 import java.time.Instant
