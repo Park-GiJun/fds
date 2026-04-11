@@ -7,9 +7,9 @@ enum class RiskLevel {
     CRITICAL,
     ;
 
+    fun isBlockLevel(): Boolean = this in BLOCK_LEVELS
+
     companion object {
         private val BLOCK_LEVELS = setOf(HIGH, CRITICAL)
-
-        fun isBlockLevel(level: RiskLevel): Boolean = level in BLOCK_LEVELS
     }
 }

@@ -1,5 +1,6 @@
 plugins {
     id("fds-spring-boot-service")
+    kotlin("plugin.jpa")
 }
 
 dependencies {

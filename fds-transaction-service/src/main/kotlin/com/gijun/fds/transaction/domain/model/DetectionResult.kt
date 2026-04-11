@@ -11,4 +11,12 @@ data class DetectionResult(
     val riskScore: Int,
     val triggeredRules: List<String>,
     val detectedAt: Instant,
-)
+) {
+    init {
+        require(riskScore in 0..MAX_RISK_SCORE) { "riskScore must be in [0, $MAX_RISK_SCORE], got $riskScore" }
+    }
+
+    companion object {
+        const val MAX_RISK_SCORE = 100
+    }
+}

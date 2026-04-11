@@ -7,22 +7,22 @@ class RiskLevelTest {
 
     @Test
     fun `HIGH는 차단 레벨이다`() {
-        RiskLevel.isBlockLevel(RiskLevel.HIGH) shouldBe true
+        RiskLevel.HIGH.isBlockLevel() shouldBe true
     }
 
     @Test
     fun `CRITICAL은 차단 레벨이다`() {
-        RiskLevel.isBlockLevel(RiskLevel.CRITICAL) shouldBe true
+        RiskLevel.CRITICAL.isBlockLevel() shouldBe true
     }
 
     @Test
     fun `LOW는 차단 레벨이 아니다`() {
-        RiskLevel.isBlockLevel(RiskLevel.LOW) shouldBe false
+        RiskLevel.LOW.isBlockLevel() shouldBe false
     }
 
     @Test
     fun `MEDIUM은 차단 레벨이 아니다`() {
-        RiskLevel.isBlockLevel(RiskLevel.MEDIUM) shouldBe false
+        RiskLevel.MEDIUM.isBlockLevel() shouldBe false
     }
 
     @Test
