@@ -487,6 +487,18 @@ else
 fi
 ```
 
+### Step 8.5: 이슈 브랜치 자동 생성
+
+등록된 이슈에 대해 `/create-issue-branch` 규칙에 따라 브랜치를 자동 생성한다.
+모든 심각도(CRITICAL/HIGH/MEDIUM/LOW)의 이슈에 대해 브랜치를 생성한다.
+
+```bash
+# 각 이슈에 대해 브랜치 생성 + 코멘트
+git checkout -b {prefix}/issue-{번호}-{slug} master
+git checkout master
+gh issue comment {번호} --repo Park-GiJun/fds --body "🔀 브랜치 생성: \`{브랜치명}\`"
+```
+
 ### Step 9: 요약 출력
 
 리뷰 완료 후 터미널에 간결한 요약을 출력한다:
