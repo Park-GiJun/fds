@@ -1,5 +1,6 @@
 package com.gijun.fds.generator.domain.model
 
+import com.gijun.fds.common.security.CardMasking
 import java.math.BigDecimal
 import java.time.Instant
 
@@ -19,7 +20,7 @@ data class TransactionData(
 ) {
     override fun toString(): String =
         "TransactionData(transactionId=$transactionId, userId=$userId, " +
-            "cardNumber=****${cardNumber.takeLast(4)}, amount=$amount, currency=$currency, " +
+            "cardNumber=${CardMasking.mask(cardNumber)}, amount=$amount, currency=$currency, " +
             "merchantName=$merchantName, merchantCategory=$merchantCategory, " +
             "country=$country, city=$city)"
 }
