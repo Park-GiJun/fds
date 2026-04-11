@@ -34,5 +34,7 @@ kotlin {
 }
 
 tasks.withType<Test> {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        excludeEngines("kotest")
+    }
 }

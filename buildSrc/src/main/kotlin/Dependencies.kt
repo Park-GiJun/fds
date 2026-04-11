@@ -66,7 +66,7 @@ object Dependencies {
         const val KOTEST_RUNNER = "io.kotest:kotest-runner-junit5:${Versions.KOTEST}"
         const val KOTEST_ASSERTIONS = "io.kotest:kotest-assertions-core:${Versions.KOTEST}"
         const val KOTEST_PROPERTY = "io.kotest:kotest-property:${Versions.KOTEST}"
-        const val KOTEST_EXTENSIONS_SPRING = "io.kotest.extensions:kotest-extensions-spring:2.0.0"
+        const val KOTEST_EXTENSIONS_SPRING = "io.kotest.extensions:kotest-extensions-spring:1.3.0"
 
         // Coroutines Test
         const val COROUTINES_TEST = "org.jetbrains.kotlinx:kotlinx-coroutines-test"
