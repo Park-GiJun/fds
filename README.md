@@ -151,25 +151,27 @@ fds/
 ```
 com.gijun.fds.{service}/
 ├── domain/                          # 순수 Kotlin (Spring/인프라 의존 없음)
-│   ├── model/                       # 도메인 모델 (Entity, VO, Enum)
-│   └── port/
-│       ├── in/                      # Inbound Port (UseCase 인터페이스)
-│       └── out/                     # Outbound Port (외부 시스템 인터페이스)
+│   ├── model/                       # 도메인 모델 (Entity, VO)
+│   └── enums/                       # 도메인 enum
 │
-├── application/                     # UseCase 구현체
-│   └── {Feature}Service.kt         # port.in 구현, port.out만 의존
+├── application/
+│   ├── port/
+│   │   ├── inbound/                 # Inbound Port (UseCase 인터페이스)
+│   │   └── outbound/                # Outbound Port (외부 시스템 인터페이스)
+│   └── handler/                     # UseCase 구현체 ({Resource}Handler)
 │
 ├── infrastructure/
 │   ├── adapter/
-│   │   ├── in/
-│   │   │   └── web/                 # Controller (@RestController)
-│   │   └── out/
+│   │   ├── inbound/
+│   │   │   ├── web/                 # Controller (@RestController)
+│   │   │   └── messaging/           # Kafka Consumer
+│   │   └── outbound/
 │   │       ├── persistence/         # JPA Repository, Entity 매핑
-│   │       ├── messaging/           # Kafka Producer/Consumer
+│   │       ├── messaging/           # Kafka Producer
 │   │       ├── cache/               # Redis 구현체
 │   │       ├── search/              # Elasticsearch 구현체
 │   │       └── client/              # Ktor HTTP Client
-│   └── config/                      # Spring Bean 설정, Properties
+│   └── config/                      # Spring Bean 설정, SecurityConfig
 │
 └── {Service}Application.kt
 ```
@@ -177,18 +179,20 @@ com.gijun.fds.{service}/
 ### 4.2 의존 방향 규칙
 
 ```
-infrastructure.adapter.in  ──▶  domain.port.in  ◀──  application
-infrastructure.adapter.out ◀──  domain.port.out ◀──  application
+infrastructure.adapter.inbound  ──▶  application.port.inbound  ◀──  application.handler
+infrastructure.adapter.outbound ◀──  application.port.outbound ◀──  application.handler
 
-    [Infrastructure]          [Domain]           [Application]
-    Spring, JPA, Kafka        순수 Kotlin         UseCase 구현
-    Redis, ES, Ktor           인터페이스만          Port만 의존
+    [Infrastructure]              [Application]              [Domain]
+    Spring, JPA, Kafka            Port + Handler             순수 Kotlin
+    Redis, ES, Ktor               인터페이스 + 구현체          모델, enum
 ```
 
 **절대 규칙:**
 - `domain` 패키지는 Spring, JPA, Kafka 등 외부 프레임워크를 import하지 않는다
-- `application`은 `domain.port.out` 인터페이스만 의존하고, 구현체(infrastructure)를 모른다
-- `infrastructure.adapter.in.web`(Controller)은 `domain.port.in`(UseCase)만 의존한다
+- `application.handler`는 `application.port.outbound` 인터페이스만 의존하고, 구현체(infrastructure)를 모른다
+- `infrastructure.adapter.inbound.web`(Controller)은 `application.port.inbound`(UseCase)만 의존한다
+- UseCase 구현체 네이밍: `{Resource}Handler` (Service, Impl 사용 금지)
+- `application.handler`는 @Bean 수동 등록, `infrastructure.adapter`는 @Component 허용
 
 ---
 
@@ -913,13 +917,20 @@ infrastructure/
 # 인프라 기동
 docker compose up -d
 
-# 서비스 기동 순서
-1. EurekaServerApplication    (:8761)
+# 서비스 기동 순서 (Eureka/Config Server가 먼저 기동되어야 함)
+1. EurekaServerApplication    (:8761) — Eureka + Config Server 겸임
+   → 환경변수 필요: DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD,
+     REDIS_HOST, REDIS_PORT, REDIS_PASSWORD,
+     KAFKA_BOOTSTRAP_SERVERS, ELASTICSEARCH_URIS,
+     CONFIG_USERNAME, CONFIG_PASSWORD
 2. TransactionServiceApplication (:8081)
    DetectionServiceApplication   (:8082)
    AlertServiceApplication       (:8083)
+   → Config Server에서 설정 수신 (환경변수: CONFIG_PASSWORD, ADMIN_PASSWORD)
 3. GatewayApplication           (:8080)
 4. GeneratorApplication          (:8090)
+
+# Eureka/Config Server 미기동 시 → 모든 서비스 기동 실패 (의도적 Fail-Fast)
 ```
 
 ### 6.2 인프라 구성

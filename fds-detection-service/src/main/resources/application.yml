@@ -5,8 +5,8 @@ spring:
   application:
     name: fds-detection-service
   config:
-    import: configserver:http://localhost:8761
+    import: configserver:${CONFIG_SERVER_URL:http://localhost:8761}
   cloud:
     config:
       username: ${CONFIG_USERNAME:config}
-      password: ${CONFIG_PASSWORD:config-secret}
+      password: ${CONFIG_PASSWORD}

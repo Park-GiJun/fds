@@ -14,7 +14,7 @@ spring:
   security:
     user:
       name: ${CONFIG_USERNAME:config}
-      password: ${CONFIG_PASSWORD:config-secret}
+      password: ${CONFIG_PASSWORD}
 
 eureka:
   client:
