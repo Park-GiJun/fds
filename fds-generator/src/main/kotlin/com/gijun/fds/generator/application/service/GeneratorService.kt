@@ -50,11 +50,11 @@ class GeneratorService(
         job = scope.launch {
             var lastLoggedCount = 0L
             val logInterval = rate.toLong() * 10
+            val semaphore = Semaphore(MAX_CONCURRENT_SEND)
 
             while (isActive && running.get()) {
                 val batchStart = System.currentTimeMillis()
 
-                val semaphore = Semaphore(MAX_CONCURRENT_SEND)
                 coroutineScope {
                     repeat(rate) {
                         launch {
