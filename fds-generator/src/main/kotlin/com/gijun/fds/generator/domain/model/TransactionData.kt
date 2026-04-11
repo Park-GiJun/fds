@@ -3,10 +3,18 @@ package com.gijun.fds.generator.domain.model
 import java.math.BigDecimal
 import java.time.Instant
 
+@JvmInline
+value class CardNumber(private val value: String) {
+    val raw: String get() = value
+    override fun toString(): String =
+        if (value.length >= 13) "${value.take(6)}******${value.takeLast(4)}"
+        else "******"
+}
+
 data class TransactionData(
     val transactionId: String,
     val userId: String,
-    val cardNumber: String,
+    val cardNumber: CardNumber,
     val amount: BigDecimal,
     val currency: String,
     val merchantName: String,
@@ -16,13 +24,7 @@ data class TransactionData(
     val latitude: Double,
     val longitude: Double,
     val timestamp: Instant,
-) {
-    override fun toString(): String =
-        "TransactionData(transactionId=$transactionId, userId=$userId, " +
-            "cardNumber=****${cardNumber.takeLast(4)}, amount=$amount, currency=$currency, " +
-            "merchantName=$merchantName, merchantCategory=$merchantCategory, " +
-            "country=$country, city=$city)"
-}
+)
 
 enum class FraudType {
     HIGH_AMOUNT,
