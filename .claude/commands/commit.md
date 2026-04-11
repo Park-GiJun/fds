@@ -131,8 +131,6 @@ Agent가 생성한 메시지로 커밋한다:
 ```bash
 git commit -m "$(cat <<'EOF'
 {Agent가 생성한 메시지}
-
-Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
 EOF
 )"
 ```
