@@ -38,15 +38,15 @@ class DomainExceptionsTest {
     }
 
     @Test
-    fun `DomainForbiddenException 기본 메시지 확인`() {
-        val ex = DomainForbiddenException()
-        ex.message shouldBe "Access forbidden"
+    fun `DomainAccessDeniedException 기본 메시지 확인`() {
+        val ex = DomainAccessDeniedException()
+        ex.message shouldBe "Access denied"
     }
 
     @Test
-    fun `DomainUnauthorizedException 기본 메시지 확인`() {
-        val ex = DomainUnauthorizedException()
-        ex.message shouldBe "Unauthorized access"
+    fun `DomainAuthenticationRequiredException 기본 메시지 확인`() {
+        val ex = DomainAuthenticationRequiredException()
+        ex.message shouldBe "Authentication required"
     }
 
     @Test
@@ -62,8 +62,8 @@ class DomainExceptionsTest {
             DomainValidationException(),
             DomainAlreadyExistsException(),
             DomainConflictException(),
-            DomainForbiddenException(),
-            DomainUnauthorizedException(),
+            DomainAccessDeniedException(),
+            DomainAuthenticationRequiredException(),
             DomainInvalidStateException(),
         )
 
