@@ -41,17 +41,21 @@ class RateLimitFilter : OncePerRequestFilter() {
         private val lastRefill = AtomicLong(System.currentTimeMillis())
 
         fun tryConsume(): Boolean {
-            val now = System.currentTimeMillis()
-            val last = lastRefill.get()
-            if (now - last >= refillIntervalMs) {
-                if (lastRefill.compareAndSet(last, now)) {
-                    tokens.set(maxTokens)
-                }
-            }
+            refillIfNeeded()
             while (true) {
                 val current = tokens.get()
                 if (current <= 0) return false
                 if (tokens.compareAndSet(current, current - 1)) return true
+            }
+        }
+
+        private fun refillIfNeeded() {
+            val now = System.currentTimeMillis()
+            val last = lastRefill.get()
+            if (now - last >= refillIntervalMs) {
+                if (lastRefill.compareAndSet(last, now)) {
+                    tokens.getAndSet(maxTokens)
+                }
             }
         }
     }
