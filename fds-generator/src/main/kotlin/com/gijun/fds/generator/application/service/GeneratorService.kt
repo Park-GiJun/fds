@@ -54,14 +54,20 @@ class GeneratorService(
             while (isActive && running.get()) {
                 val batchStart = System.currentTimeMillis()
 
+                val semaphore = Semaphore(MAX_CONCURRENT_SEND)
                 coroutineScope {
                     repeat(rate) {
                         launch {
-                            val tx = generateTransaction(fraudRatio)
-                            if (transactionSendPort.send(tx)) {
-                                totalSent.incrementAndGet()
-                            } else {
-                                totalFailed.incrementAndGet()
+                            semaphore.acquire()
+                            try {
+                                val tx = generateTransaction(fraudRatio)
+                                if (transactionSendPort.send(tx)) {
+                                    totalSent.incrementAndGet()
+                                } else {
+                                    totalFailed.incrementAndGet()
+                                }
+                            } finally {
+                                semaphore.release()
                             }
                         }
                     }
@@ -138,6 +144,7 @@ class GeneratorService(
         }
 
     companion object {
+        private const val MAX_CONCURRENT_SEND = 200
         private const val MAX_CONCURRENT_BURST = 200
     }
 }
