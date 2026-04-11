@@ -1,4 +1,4 @@
-package com.gijun.fds.gateway.infrastructure.adapter.`in`.filter
+package com.gijun.fds.gateway.infrastructure.adapter.inbound.filter
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import jakarta.servlet.FilterChain

@@ -8,9 +8,10 @@
 ## 코딩 규칙
 - domain 패키지에 Spring/JPA/Kafka 등 프레임워크 의존 금지
 - application 계층에 Spring 어노테이션(@Service, @Component 등) 사용 금지 → infrastructure/config에서 @Bean 등록
-- application은 port 인터페이스만 의존 (port 위치: `application.port.in`, `application.port.out`)
+- application은 port 인터페이스만 의존 (port 위치: `application.port.inbound`, `application.port.outbound`)
 - 도메인 모델은 HTTP 응답으로 직접 노출 금지 → infrastructure 계층에 Response DTO 분리
-- UseCase 구현체 네이밍: `{Resource}Service` (Handler, Impl 사용 금지)
+- UseCase 구현체 네이밍: `{Resource}Handler` (Service, Impl 사용 금지)
+- inbound adapter 위치: `infrastructure.adapter.inbound` (web, filter 등)
 - non-const val은 camelCase, const val만 SCREAMING_SNAKE_CASE
 - 한국어 커밋 메시지 사용
 

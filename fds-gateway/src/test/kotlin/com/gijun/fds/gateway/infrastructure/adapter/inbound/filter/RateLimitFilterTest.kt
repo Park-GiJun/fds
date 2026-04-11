@@ -1,4 +1,4 @@
-package com.gijun.fds.gateway.infrastructure.adapter.`in`.filter
+package com.gijun.fds.gateway.infrastructure.adapter.inbound.filter
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain

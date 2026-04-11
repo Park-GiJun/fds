@@ -1,4 +1,4 @@
-package com.gijun.fds.generator.infrastructure.adapter.`in`.web.dto
+package com.gijun.fds.generator.infrastructure.adapter.inbound.web.dto
 
 data class GeneratorStatusResponse(
     val running: Boolean,

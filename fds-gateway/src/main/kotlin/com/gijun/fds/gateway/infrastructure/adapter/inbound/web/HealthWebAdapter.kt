@@ -1,4 +1,4 @@
-package com.gijun.fds.gateway.infrastructure.adapter.`in`.web
+package com.gijun.fds.gateway.infrastructure.adapter.inbound.web
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController

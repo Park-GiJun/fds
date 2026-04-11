@@ -1,6 +1,6 @@
 package com.gijun.fds.generator.infrastructure.adapter.out.client
 
-import com.gijun.fds.generator.application.port.out.TransactionSendPort
+import com.gijun.fds.generator.application.port.outbound.TransactionSendPort
 import com.gijun.fds.generator.domain.model.TransactionData
 import com.gijun.fds.generator.infrastructure.adapter.out.client.dto.TransactionSendRequest
 import io.ktor.client.*

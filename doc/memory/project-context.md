@@ -47,10 +47,10 @@
 
 ## 확립된 컨벤션 (Quality Lead 확정, 2026-04-11)
 - 패키지: `com.gijun.fds.{module}.{layer}.{sublayer}`
-- UseCase 구현체: `{Resource}Service` (Handler/Impl 사용 금지)
-- in-port: `{Resource}UseCase` at `application.port.in`
-- out-port: `{Action}{Resource}Port` at `application.port.out`
-- 웹 어댑터: `{Name}WebAdapter`
+- UseCase 구현체: `{Resource}Handler` (Service/Impl 사용 금지) — 2026-04-12 컨벤션 변경
+- in-port: `{Resource}UseCase` at `application.port.inbound`
+- out-port: `{Action}{Resource}Port` at `application.port.outbound`
+- 웹 어댑터: `{Name}WebAdapter` at `infrastructure.adapter.inbound.web`
 - 상수: `const val` → SCREAMING_SNAKE_CASE / 일반 `val` → camelCase
 - 함수 스타일: 단일 표현식 → expression body, named argument + trailing comma 필수
 - Logger: `LoggerFactory.getLogger(javaClass)` 인스턴스 패턴

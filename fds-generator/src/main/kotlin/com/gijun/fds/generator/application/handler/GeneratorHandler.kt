@@ -1,7 +1,7 @@
-package com.gijun.fds.generator.application.service
+package com.gijun.fds.generator.application.handler
 
-import com.gijun.fds.generator.application.port.`in`.GeneratorUseCase
-import com.gijun.fds.generator.application.port.out.TransactionSendPort
+import com.gijun.fds.generator.application.port.inbound.GeneratorUseCase
+import com.gijun.fds.generator.application.port.outbound.TransactionSendPort
 import com.gijun.fds.generator.domain.model.FraudType
 import com.gijun.fds.generator.domain.model.GeneratorStatus
 import com.gijun.fds.generator.domain.model.TransactionDataFactory
@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
 import kotlin.random.Random
 
-class GeneratorService(
+class GeneratorHandler(
     private val transactionSendPort: TransactionSendPort,
 ) : GeneratorUseCase {
 

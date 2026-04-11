@@ -1,8 +1,8 @@
-package com.gijun.fds.generator.infrastructure.adapter.`in`.web
+package com.gijun.fds.generator.infrastructure.adapter.inbound.web
 
-import com.gijun.fds.generator.application.port.`in`.GeneratorUseCase
+import com.gijun.fds.generator.application.port.inbound.GeneratorUseCase
 import com.gijun.fds.generator.domain.model.GeneratorStatus
-import com.gijun.fds.generator.infrastructure.adapter.`in`.web.dto.GeneratorStatusResponse
+import com.gijun.fds.generator.infrastructure.adapter.inbound.web.dto.GeneratorStatusResponse
 import org.springframework.web.bind.annotation.*
 
 @RestController

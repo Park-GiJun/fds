@@ -1,4 +1,4 @@
-package com.gijun.fds.generator.application.port.`in`
+package com.gijun.fds.generator.application.port.inbound
 
 import com.gijun.fds.generator.domain.model.GeneratorStatus
 

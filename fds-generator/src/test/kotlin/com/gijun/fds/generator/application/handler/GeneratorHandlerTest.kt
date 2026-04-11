@@ -1,6 +1,6 @@
-package com.gijun.fds.generator.application.service
+package com.gijun.fds.generator.application.handler
 
-import com.gijun.fds.generator.application.port.out.TransactionSendPort
+import com.gijun.fds.generator.application.port.outbound.TransactionSendPort
 import com.gijun.fds.generator.domain.model.TransactionData
 import io.kotest.matchers.longs.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
@@ -11,10 +11,10 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 
-class GeneratorServiceTest {
+class GeneratorHandlerTest {
 
     private val transactionSendPort = mockk<TransactionSendPort>()
-    private val sut = GeneratorService(transactionSendPort)
+    private val sut = GeneratorHandler(transactionSendPort)
 
     @AfterEach
     fun tearDown() {
