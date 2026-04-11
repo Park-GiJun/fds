@@ -1,14 +1,13 @@
 package com.gijun.fds.generator.domain.model
 
+import com.gijun.fds.common.security.CardMasking
 import java.math.BigDecimal
 import java.time.Instant
 
 @JvmInline
 value class CardNumber(private val value: String) {
     val raw: String get() = value
-    override fun toString(): String =
-        if (value.length >= 13) "${value.take(6)}******${value.takeLast(4)}"
-        else "******"
+    override fun toString(): String = CardMasking.mask(value)
 }
 
 data class TransactionData(
