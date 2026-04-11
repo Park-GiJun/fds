@@ -20,7 +20,7 @@ class TransactionDataFactoryTest {
         // then
         tx.transactionId.shouldNotBeBlank()
         tx.userId.shouldNotBeBlank()
-        tx.cardNumber.shouldNotBeBlank()
+        tx.cardNumber.raw.shouldNotBeBlank()
         tx.merchantName.shouldNotBeBlank()
         tx.merchantCategory.shouldNotBeBlank()
         tx.country.shouldNotBeBlank()
@@ -53,7 +53,7 @@ class TransactionDataFactoryTest {
         val tx = TransactionDataFactory.createNormal()
 
         // then
-        tx.cardNumber shouldStartWith "4"
+        tx.cardNumber.raw shouldStartWith "4"
     }
 
     @Test

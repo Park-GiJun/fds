@@ -1,5 +1,6 @@
 package com.gijun.fds.generator.infrastructure.adapter.out.client
 
+import com.gijun.fds.generator.domain.model.CardNumber
 import com.gijun.fds.generator.domain.model.TransactionData
 import io.kotest.matchers.shouldBe
 import io.ktor.client.*
@@ -17,7 +18,7 @@ class KtorTransactionSendAdapterTest {
     private fun createTestTransaction() = TransactionData(
         transactionId = "tx-001",
         userId = "USER_00001",
-        cardNumber = "4123456789012",
+        cardNumber = CardNumber("4123456789012"),
         amount = BigDecimal(50000),
         currency = "KRW",
         merchantName = "스타벅스",

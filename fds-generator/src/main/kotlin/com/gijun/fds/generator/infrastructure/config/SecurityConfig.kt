@@ -28,9 +28,11 @@ class SecurityConfig(
             csrf { disable() }
             sessionManagement { sessionCreationPolicy = SessionCreationPolicy.STATELESS }
             authorizeHttpRequests {
-                authorize("/actuator/**", permitAll)
+                authorize("/actuator/health", permitAll)
+                authorize("/actuator/info", permitAll)
                 authorize("/api/v1/generator/status", permitAll)
                 authorize("/api/v1/generator/**", hasRole("ADMIN"))
+                authorize(anyRequest, denyAll)
             }
             httpBasic { }
         }
