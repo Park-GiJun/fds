@@ -1,61 +1,55 @@
-변경된 코드 또는 지정한 파일에 대해 테스트 코드를 자동 생성한다.
+테스트 브랜치를 생성하고, 테스트 코드를 자동 작성하고, 실행하고, 통과하면 커밋 → PR → master merge까지 자동화한다.
 
 ## 사용법
-- `/test` — 최근 커밋에서 변경된 파일의 테스트 생성
-- `/test {파일경로}` — 특정 파일의 테스트 생성
+- `/test` — 최근 커밋에서 변경된 파일의 테스트 생성 + 전체 파이프라인
+- `/test {파일경로}` — 특정 파일의 테스트 생성 + 전체 파이프라인
 - `/test --module {모듈명}` — 모듈 전체 테스트 생성 (예: `/test --module fds-generator`)
 - `/test --setup` — 테스트 인프라 세팅만 수행 (의존성 추가, 설정 파일 생성)
 
 ---
 
-## Step 1: 테스트 인프라 확인 및 세팅
+## Step 1: 테스트 브랜치 생성 + 체크아웃
+
+```bash
+export PATH="$HOME/bin:$PATH"
+
+# 현재 master 최신화
+git fetch origin master
+git checkout master
+git pull origin master
+
+# 테스트 브랜치 생성
+# 브랜치명: test/{대상}-tests
+# 예: test/fds-generator-tests, test/rate-limit-filter-tests
+branch_name="test/{대상 slug}-tests"
+git checkout -b "$branch_name"
+```
+
+**브랜치명 규칙:**
+- `/test --module fds-generator` → `test/fds-generator-tests`
+- `/test TransactionDataFactory.kt` → `test/transaction-data-factory-tests`
+- `/test` (변경 파일 기반) → `test/{커밋해시앞7자리}-tests`
+
+---
+
+## Step 2: 테스트 인프라 확인 및 세팅
 
 테스트 의존성이 누락되어 있으면 자동으로 추가한다.
 
-### 필수 의존성 확인 (Dependencies.kt)
-```kotlin
-object Test {
-    // 기존
-    const val SPRING_BOOT_TEST = "org.springframework.boot:spring-boot-starter-test"
-    const val KOTLIN_TEST = "org.jetbrains.kotlin:kotlin-test-junit5"
-    const val JUNIT_LAUNCHER = "org.junit.platform:junit-platform-launcher"
-
-    // 추가 필요 시 자동 등록
-    const val MOCKK = "io.mockk:mockk:${Versions.MOCKK}"
-    const val COROUTINES_TEST = "org.jetbrains.kotlinx:kotlinx-coroutines-test"
-    const val KTOR_CLIENT_MOCK = "io.ktor:ktor-client-mock:${Versions.KTOR}"
-    const val TESTCONTAINERS_BOM = "org.testcontainers:testcontainers-bom:${Versions.TESTCONTAINERS}"
-    const val TESTCONTAINERS_JUNIT = "org.testcontainers:junit-jupiter"
-    const val TESTCONTAINERS_KAFKA = "org.testcontainers:kafka"
-    const val TESTCONTAINERS_POSTGRESQL = "org.testcontainers:postgresql"
-    const val SPRING_KAFKA_TEST = "org.springframework.kafka:spring-kafka-test"
-}
-```
-
-### Versions.kt에 추가 필요 시
-```kotlin
-const val MOCKK = "1.14.2"
-const val TESTCONTAINERS = "1.21.0"
-```
-
-### 모듈별 build.gradle.kts에 추가
-대상 모듈에 따라 필요한 테스트 의존성을 `testImplementation`으로 자동 추가한다:
-
-| 모듈 | 필요 의존성 |
-|------|------------|
-| fds-common | mockk, kotlin-test |
-| fds-generator | mockk, coroutines-test, ktor-client-mock |
-| fds-gateway | mockk, spring-boot-test |
-| fds-transaction-service | mockk, testcontainers-postgresql, spring-kafka-test |
-| fds-detection-service | mockk, coroutines-test, testcontainers-kafka |
-| fds-alert-service | mockk, testcontainers-postgresql, spring-kafka-test |
+### 현재 세팅된 의존성 (이미 추가됨)
+- **전 모듈 공통** (fds-kotlin-base): Kotest 6, MockK, kotlin-test
+- **Spring 모듈** (fds-spring-boot): Kotest Spring Extensions, coroutines-test, spring-boot-test
+- **fds-generator**: + Ktor Client Mock
+- **fds-transaction-service**: + Testcontainers(PG, Kafka), Spring Kafka Test
+- **fds-detection-service**: + Testcontainers(Kafka), Spring Kafka Test
+- **fds-alert-service**: + Testcontainers(PG, Kafka), Spring Kafka Test
 
 ### application-test.yml 생성
 각 모듈의 `src/test/resources/application-test.yml`이 없으면 자동 생성한다.
 
 ---
 
-## Step 2: 테스트 대상 분석
+## Step 3: 테스트 대상 분석
 
 ### 변경 파일 기반 (`/test`)
 ```bash
@@ -77,7 +71,7 @@ find {모듈}/src/main -name "*.kt" -not -path "*/build/*"
 
 ---
 
-## Step 3: 테스트 전략 수립 — 에이전트 "김태현" (Test Strategist)
+## Step 4: 테스트 전략 수립 — 에이전트 "김태현" (Test Strategist)
 
 `/review`의 Testing 리뷰어와 동일 인물이 테스트 전략을 수립한다.
 
@@ -98,12 +92,12 @@ find {모듈}/src/main -name "*.kt" -not -path "*/build/*"
 
 | 계층 | 테스트 유형 | 도구 |
 |------|-----------|------|
-| domain/model | 순수 단위 테스트 | kotlin-test, MockK 없음 |
+| domain/model | 순수 단위 테스트 | Kotest, MockK 없음 |
 | domain/port | 인터페이스 — 테스트 불필요 (구현체에서 테스트) |
-| application/service | 단위 테스트 + MockK (port mock) | MockK, coroutines-test |
-| infrastructure/adapter/in/web | @WebMvcTest | spring-boot-test, MockK |
+| application/service | 단위 테스트 + MockK (port mock) | Kotest, MockK, coroutines-test |
+| infrastructure/adapter/in/web | @WebMvcTest | Kotest Spring, MockK |
 | infrastructure/adapter/out | 통합 테스트 또는 Mock 테스트 | Testcontainers, ktor-client-mock |
-| infrastructure/config | @SpringBootTest 슬라이스 | spring-boot-test |
+| infrastructure/config | @SpringBootTest 슬라이스 | Kotest Spring |
 
 ### 테스트 케이스 설계 원칙
 1. **Given-When-Then** 패턴 (한국어 주석)
@@ -117,9 +111,10 @@ find {모듈}/src/main -name "*.kt" -not -path "*/build/*"
 - 예상 테스트 파일 경로
 ```
 
-## Step 4: 테스트 코드 작성 — 에이전트 "이수빈" (Test Engineer)
+## Step 5: 테스트 코드 작성 — 에이전트 "이수빈" (Test Engineer)
 
-실제 테스트 코드를 작성하는 에이전트.
+실제 단위 테스트 코드를 작성하는 에이전트.
+김태현이 수립한 전략을 기반으로 코드를 작성한다.
 
 ```
 당신은 **이수빈**입니다 — 5년차 Kotlin 백엔드 개발자이자 테스트 장인.
@@ -148,8 +143,8 @@ src/test/kotlin/com/gijun/fds/{module}/
 │   ├── persistence/{Adapter}Test.kt # @DataJpaTest + Testcontainers
 │   ├── messaging/{Producer}Test.kt  # Kafka 테스트
 │   └── cache/{Adapter}Test.kt      # Redis 테스트
-└── integration/
-    └── {Feature}IntegrationTest.kt  # 전체 흐름 통합 테스트
+└── support/
+    └── TestFixtures.kt             # 테스트 공용 fixture
 ```
 
 ### 테스트 코드 스타일
@@ -159,16 +154,15 @@ class TransactionDataFactoryTest {
 
     @Test
     fun `정상 거래 생성 시 금액이 카테고리 범위 내에 있다`() {
-        // given
-        // (팩토리는 stateless이므로 setup 불필요)
+        // given — (팩토리는 stateless이므로 setup 불필요)
 
         // when
         val transaction = TransactionDataFactory.createNormal()
 
         // then
-        assertThat(transaction.amount).isPositive()
-        assertThat(transaction.transactionId).isNotBlank()
-        assertThat(transaction.userId).startsWith("USER_")
+        transaction.amount shouldBeGreaterThan BigDecimal.ZERO
+        transaction.transactionId.shouldNotBeBlank()
+        transaction.userId shouldStartWith "USER_"
     }
 
     @Test
@@ -177,7 +171,7 @@ class TransactionDataFactoryTest {
         val transaction = TransactionDataFactory.createSuspicious(FraudType.HIGH_AMOUNT)
 
         // then
-        assertThat(transaction.amount).isGreaterThanOrEqualTo(BigDecimal(3_000_000))
+        transaction.amount shouldBeGreaterThanOrEqualTo BigDecimal(3_000_000)
     }
 }
 ```
@@ -205,7 +199,7 @@ class GeneratorServiceTest {
         advanceUntilIdle()
 
         // then
-        assertThat(sut.getStatus().running).isTrue()
+        sut.getStatus().running.shouldBeTrue()
 
         // cleanup
         sut.stop()
@@ -260,21 +254,23 @@ class KtorTransactionSendAdapterTest {
         val result = adapter.send(createTestTransaction())
 
         // then
-        assertThat(result).isTrue()
+        result.shouldBeTrue()
     }
 }
 ```
 
 ## 주의사항
-- `@SpringBootTest`는 최소한으로 사용한다. 슬라이스 테스트(`@WebMvcTest`, `@DataJpaTest`)를 우선한다.
+- Kotest Assertions 사용 (`shouldBe`, `shouldBeTrue`, `shouldStartWith` 등)
+- `@SpringBootTest`는 최소한으로 사용. 슬라이스 테스트 우선.
 - 테스트에서 `Thread.sleep()` 사용 금지. `advanceTimeBy()`, `advanceUntilIdle()` 사용.
 - Random 의존 코드는 시드 고정하거나 추상화하여 결정적 테스트 작성.
-- 한 테스트 파일에 15개 이상의 테스트가 있으면 파일을 분리한다.
+- 한 테스트 파일에 15개 이상의 테스트가 있으면 파일을 분리.
 ```
 
-## Step 5: 통합 테스트 작성 (필요 시) — 에이전트 "박준영" (Integration Specialist)
+## Step 6: 통합 테스트 작성 (필요 시) — 에이전트 "박준영" (Integration Specialist)
 
 Testcontainers, Kafka, Redis 등 외부 시스템 연동 테스트를 작성하는 에이전트.
+**비즈니스 서비스(transaction, detection, alert)의 infrastructure 계층 테스트에만 호출된다.**
 
 ```
 당신은 **박준영**입니다 — 7년차 인프라 겸 백엔드 엔지니어.
@@ -323,39 +319,20 @@ abstract class IntegrationTestBase {
 }
 ```
 
-```kotlin
-@SpringBootTest
-@Testcontainers
-@ActiveProfiles("test")
-abstract class KafkaIntegrationTestBase {
-
-    companion object {
-        @Container
-        @JvmStatic
-        val kafka = KafkaContainer(DockerImageName.parse("apache/kafka:4.0.0"))
-
-        @DynamicPropertySource
-        @JvmStatic
-        fun properties(registry: DynamicPropertyRegistry) {
-            registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers)
-        }
-    }
-}
-```
-
 ## 통합 테스트 작성 규칙
 - 테스트 클래스명: `{기능}IntegrationTest`
-- 테스트 함수명: 한국어 백틱 (`\`거래 생성 → Kafka 발행 → ES 인덱싱 전체 흐름\``)
+- 테스트 함수명: 한국어 백틱
 - @Transactional 사용 시 Kafka 메시지 발행이 롤백됨에 주의 → 수동 cleanup 사용
 - 컨테이너는 클래스 레벨에서 공유 (테스트 간 재사용)
 ```
 
-## Step 6: 빌드 및 테스트 실행
+---
+
+## Step 7: 빌드 및 테스트 실행
 
 테스트 코드 작성 후 빌드와 테스트를 실행한다:
 
 ```bash
-# 빌드 + 테스트
 powershell.exe -Command "& {
     $env:JAVA_HOME='C:\Users\tpgj9\.jdks\openjdk-26';
     Set-Location 'C:\Users\tpgj9\IdeaProjects\fds';
@@ -363,18 +340,116 @@ powershell.exe -Command "& {
 }"
 ```
 
-테스트 실패 시:
-1. 실패 원인 분석
-2. 테스트 코드 수정
+### 실패 시 자동 수정 루프 (최대 3회)
+1. 실패 원인 분석 (에러 메시지, 스택 트레이스)
+2. 테스트 코드 수정 (컴파일 에러, assertion 수정, mock 설정 보완)
 3. 재실행
-4. 최대 3회 시도 후에도 실패하면 실패한 테스트를 `@Disabled("TODO: {사유}")` 처리하고 보고
+4. 3회 시도 후에도 실패하면:
+   - 실패한 테스트를 `@Disabled("TODO: {사유}")` 처리
+   - 보고에 실패 사유 포함
 
-## Step 7: 출력
+---
 
+## Step 8: 커밋 + Push
+
+모든 테스트 통과 후 자동 커밋한다.
+
+```bash
+# 변경된 파일 stage (테스트 코드 + 인프라 설정)
+git add \
+  '*/src/test/**' \
+  '*/src/test/resources/**' \
+  buildSrc/src/main/kotlin/Dependencies.kt \
+  buildSrc/src/main/kotlin/Versions.kt \
+  '*/build.gradle.kts'
+
+# 커밋 — 송준호(Commit Craft)의 커밋 메시지 규칙 적용
+git commit -m "test: {대상 모듈/파일} 테스트 코드 추가
+
+{작성된 테스트 파일 목록}
+- 총 {N}개 테스트 (통과 {n}, 건너뜀 {n})
+
+Refs #6
+
+Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>"
+
+# Push
+git push -u origin "$branch_name"
+```
+
+---
+
+## Step 9: PR 생성 + Merge
+
+```bash
+export PATH="$HOME/bin:$PATH"
+
+# PR 생성 — 오세린(Ship Captain) 스타일
+pr_url=$(gh pr create \
+  --repo Park-GiJun/fds \
+  --base master \
+  --title "[#6] test: {대상} 테스트 코드 추가" \
+  --body "$(cat <<'PREOF'
+## 요약
+{대상 모듈}의 테스트 코드를 자동 생성하여 추가합니다.
+
+## 변경 내용
+{생성된 테스트 파일 목록 — 각각 파일 경로 + 테스트 수}
+
+## 테스트 결과
+- 총 테스트: {N}개
+- 통과: {n}개
+- 실패: {n}개
+- 건너뜀: {n}개
+
+## 관련 이슈
+- Refs #6
+
+## 체크리스트
+- [x] 빌드 성공 확인
+- [x] 전체 테스트 통과 확인
+- [x] 기존 코드 변경 없음 (테스트만 추가)
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+PREOF
+)")
+
+# 강민재(Gate Keeper) 체크리스트 — 테스트 전용 간소화 검증
+# 테스트만 추가한 PR이므로:
+# 1. 프로덕션 코드 변경 없음 확인
+# 2. 테스트 전체 통과 확인
+# 3. 빌드 성공 확인
+# → 3개 모두 통과하면 즉시 merge
+
+prod_changes=$(git diff origin/master..HEAD --name-only | grep -v '/test/' | grep -v 'build.gradle.kts' | grep -v 'Dependencies.kt' | grep -v 'Versions.kt' | grep -v 'application-test.yml' | wc -l)
+
+if [ "$prod_changes" -eq 0 ]; then
+  echo "✅ 프로덕션 코드 변경 없음 — 자동 merge 진행"
+
+  # Squash merge + 브랜치 삭제
+  gh pr merge --squash --delete-branch --repo Park-GiJun/fds
+
+  # local master 업데이트
+  git checkout master
+  git pull origin master
+else
+  echo "⚠️  프로덕션 코드 변경 감지 ($prod_changes 파일) — 수동 리뷰 필요"
+  echo "PR URL: $pr_url"
+fi
+```
+
+---
+
+## Step 10: 출력
+
+### 전체 파이프라인 성공 시
 ```
 ═══════════════════════════════════════════
-  Test Generation Complete
+  Test Pipeline Complete ✓
 ═══════════════════════════════════════════
+
+  브랜치: test/{slug}-tests (merged & deleted)
+  PR: #{pr_number}
 
   ┌───────────────────────────────┬──────┬──────┐
   │ 파일                          │ 테스트 │ 상태  │
@@ -385,14 +460,39 @@ powershell.exe -Command "& {
   │ RateLimitFilterTest.kt        │ 6개   │ ✅    │
   └───────────────────────────────┴──────┴──────┘
 
-  총 테스트: {N}개 (통과 {n}, 실패 {n}, 건너뜀 {n})
-  커버리지 추정: {파일별 covered/total 메서드}
+  총 테스트: {N}개 (통과 {n}, 건너뜀 {n})
 
-  인프라 변경:
-  - Dependencies.kt: MOCKK, COROUTINES_TEST 추가
-  - {모듈}/build.gradle.kts: testImplementation 추가
-  - application-test.yml 생성
+  파이프라인:
+  ✅ 브랜치 생성: test/{slug}-tests
+  ✅ 테스트 인프라 확인
+  ✅ 테스트 전략 수립 (김태현)
+  ✅ 테스트 코드 작성 (이수빈/박준영)
+  ✅ 빌드 + 테스트 실행 통과
+  ✅ 커밋 + Push
+  ✅ PR #{pr_number} 생성
+  ✅ master merge (squash)
+  ✅ 브랜치 삭제
 
-  다음 단계: /commit (테스트 코드 커밋)
+  현재 master: {short hash}
+═══════════════════════════════════════════
+```
+
+### 테스트 실패로 수동 리뷰 필요 시
+```
+═══════════════════════════════════════════
+  Test Pipeline — Manual Review Required
+═══════════════════════════════════════════
+
+  브랜치: test/{slug}-tests
+  PR: #{pr_number} (Draft)
+
+  실패한 테스트:
+  ❌ GeneratorServiceTest.`burst 동시성 제한 검증` — AssertionError: ...
+  ❌ RateLimitFilterTest.`시간 윈도우 리셋` — TimeoutException: ...
+
+  @Disabled 처리된 테스트: {N}개
+
+  PR URL: {url}
+  수동 수정 후 /ship --merge 실행
 ═══════════════════════════════════════════
 ```

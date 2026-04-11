@@ -42,17 +42,16 @@
 - 에이전트 "강민재" (Gate Keeper) — merge 전 체크리스트 검증
 - 이슈 자동 연결 + PR 코멘트 + merge 후 브랜치 삭제
 
-### `/test` — 테스트 코드 자동 생성
-변경된 코드 또는 지정 파일에 대해 테스트 코드를 자동 생성한다.
-- `/test` — 최근 커밋 변경 파일의 테스트 생성
-- `/test {파일경로}` — 특정 파일 테스트 생성
-- `/test --module {모듈명}` — 모듈 전체 테스트 생성
-- `/test --setup` — 테스트 인프라 세팅만 (의존성, 설정 파일)
-- 에이전트 "김태현" (Test Strategist) — 테스트 전략 수립 + 케이스 설계
-- 에이전트 "이수빈" (Test Engineer) — 단위 테스트 작성 (Kotest + MockK)
-- 에이전트 "박준영" (Integration Specialist) — 통합 테스트 (Testcontainers)
+### `/test` — 테스트 자동 생성 파이프라인
+브랜치 생성 → 테스트 작성 → 실행 → 커밋 → PR → master merge 전체 자동화.
+- `/test` — 최근 커밋 변경 파일 기반
+- `/test {파일경로}` — 특정 파일 대상
+- `/test --module {모듈명}` — 모듈 전체 대상
+- `/test --setup` — 인프라 세팅만 (의존성, 설정 파일)
+- 파이프라인: `test/` 브랜치 생성 → 테스트 작성 → 빌드+실행 → 커밋+push → PR → squash merge
+- 프로덕션 코드 변경 없으면 자동 merge, 변경 있으면 수동 리뷰 요청
+- 에이전트: 김태현(전략) → 이수빈(단위) → 박준영(통합)
 - 테스트 프레임워크: Kotest 6 + MockK + Testcontainers
-- 빌드 + 테스트 실행 후 결과 보고
 
 ### `/create-issue-branch` — 이슈 기반 브랜치 생성
 이슈 번호를 받아 라벨 기반 prefix + slug로 브랜치를 자동 생성한다.
