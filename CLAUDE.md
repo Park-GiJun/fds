@@ -26,6 +26,14 @@
   - `doc/memory/domain-glossary.md` — 도메인 용어 사전
   - `doc/memory/review-checklist.md` — 기술/품질 체크리스트
 
+### `/create-issue-branch` — 이슈 기반 브랜치 생성
+이슈 번호를 받아 라벨 기반 prefix + slug로 브랜치를 자동 생성한다.
+- `/create-issue-branch 1` — 단일 이슈 브랜치
+- `/create-issue-branch 7 8 9` — 여러 이슈 묶음 브랜치
+- `/create-issue-branch all` — 열린 이슈 전체를 의존 순서대로 일괄 생성
+- prefix 규칙: security/ > refactor/ > perf/ > feat/ > test/ > chore/
+- 브랜치명: `{prefix}/issue-{번호}-{slug}`
+
 ### `/review` — 커밋 단위 코드 리뷰
 커밋 후 호출. 6 Reviewers + 2 Leads가 리뷰한다.
 - 산출물:
