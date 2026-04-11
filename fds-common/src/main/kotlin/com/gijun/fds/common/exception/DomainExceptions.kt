@@ -8,8 +8,8 @@ open class DomainAlreadyExistsException(message: String = "Resource already exis
 
 open class DomainConflictException(message: String = "Resource conflict") : RuntimeException(message)
 
-open class DomainForbiddenException(message: String = "Access forbidden") : RuntimeException(message)
+open class DomainAccessDeniedException(message: String = "Access denied") : RuntimeException(message)
 
-open class DomainUnauthorizedException(message: String = "Unauthorized access") : RuntimeException(message)
+open class DomainAuthenticationRequiredException(message: String = "Authentication required") : RuntimeException(message)
 
 open class DomainInvalidStateException(message: String = "Invalid state") : RuntimeException(message)
