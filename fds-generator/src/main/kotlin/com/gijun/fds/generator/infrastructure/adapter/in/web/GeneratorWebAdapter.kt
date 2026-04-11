@@ -1,0 +1,43 @@
+package com.gijun.fds.generator.infrastructure.adapter.`in`.web
+
+import com.gijun.fds.generator.domain.model.GeneratorStatus
+import com.gijun.fds.generator.application.port.`in`.GeneratorUseCase
+import org.springframework.web.bind.annotation.*
+
+@RestController
+@RequestMapping("/api/v1/generator")
+class GeneratorWebAdapter(
+    private val generatorUseCase: GeneratorUseCase,
+) {
+
+    @PostMapping("/start")
+    fun start(
+        @RequestParam(defaultValue = "100") rate: Int,
+        @RequestParam(defaultValue = "0.05") fraudRatio: Double,
+    ): GeneratorStatus {
+        generatorUseCase.start(rate, fraudRatio)
+        return generatorUseCase.getStatus()
+    }
+
+    @PostMapping("/stop")
+    fun stop(): GeneratorStatus {
+        generatorUseCase.stop()
+        return generatorUseCase.getStatus()
+    }
+
+    @PostMapping("/burst")
+    fun burst(
+        @RequestParam(defaultValue = "10000") count: Int,
+        @RequestParam(defaultValue = "0.3") fraudRatio: Double,
+    ): Map<String, Any> {
+        generatorUseCase.burst(count, fraudRatio)
+        return mapOf(
+            "message" to "Burst started",
+            "count" to count,
+            "fraudRatio" to fraudRatio,
+        )
+    }
+
+    @GetMapping("/status")
+    fun status(): GeneratorStatus = generatorUseCase.getStatus()
+}
