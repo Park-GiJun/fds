@@ -7,10 +7,10 @@ import kotlin.random.Random
 
 object TransactionDataFactory {
 
-    private val USERS = (1..500).map { "USER_%05d".format(it) }
-    private val CARDS = USERS.map { "4${Random.nextLong(100_000_000_000, 999_999_999_999)}" }
+    private val users = (1..500).map { "USER_%05d".format(it) }
+    private val cards = users.map { "4${Random.nextLong(100_000_000_000, 999_999_999_999)}" }
 
-    private val MERCHANTS = listOf(
+    private val merchants = listOf(
         MerchantInfo("스타벅스", "CAFE", "KR", "서울", 37.5665, 126.9780),
         MerchantInfo("이마트", "GROCERY", "KR", "서울", 37.5140, 127.0565),
         MerchantInfo("CGV", "ENTERTAINMENT", "KR", "서울", 37.5013, 127.0396),
@@ -28,7 +28,7 @@ object TransactionDataFactory {
         MerchantInfo("Harrods", "DEPARTMENT", "GB", "London", 51.4994, -0.1632),
     )
 
-    private val NORMAL_AMOUNT_RANGES = mapOf(
+    private val normalAmountRanges = mapOf(
         "CAFE" to 3_000..15_000,
         "GROCERY" to 10_000..200_000,
         "ENTERTAINMENT" to 10_000..30_000,
@@ -43,14 +43,14 @@ object TransactionDataFactory {
     )
 
     fun createNormal(): TransactionData {
-        val userIndex = Random.nextInt(USERS.size)
-        val merchant = MERCHANTS.random()
-        val amountRange = NORMAL_AMOUNT_RANGES[merchant.category] ?: 5_000..50_000
+        val userIndex = Random.nextInt(users.size)
+        val merchant = merchants.random()
+        val amountRange = normalAmountRanges[merchant.category] ?: 5_000..50_000
 
         return TransactionData(
             transactionId = UUID.randomUUID().toString(),
-            userId = USERS[userIndex],
-            cardNumber = CARDS[userIndex],
+            userId = users[userIndex],
+            cardNumber = cards[userIndex],
             amount = BigDecimal(Random.nextInt(amountRange.first, amountRange.last)),
             currency = if (merchant.country == "KR") "KRW" else "USD",
             merchantName = merchant.name,
@@ -64,11 +64,11 @@ object TransactionDataFactory {
     }
 
     fun createSuspicious(type: FraudType): TransactionData {
-        val userIndex = Random.nextInt(USERS.size)
+        val userIndex = Random.nextInt(users.size)
         val base = createNormal().copy(
             transactionId = UUID.randomUUID().toString(),
-            userId = USERS[userIndex],
-            cardNumber = CARDS[userIndex],
+            userId = users[userIndex],
+            cardNumber = cards[userIndex],
             timestamp = Instant.now(),
         )
 
@@ -80,7 +80,7 @@ object TransactionDataFactory {
             FraudType.RAPID_SUCCESSION -> base
 
             FraudType.FOREIGN_AFTER_DOMESTIC -> {
-                val foreign = MERCHANTS.filter { it.country != "KR" }.random()
+                val foreign = merchants.filter { it.country != "KR" }.random()
                 base.copy(
                     merchantName = foreign.name,
                     merchantCategory = foreign.category,

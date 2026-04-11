@@ -18,7 +18,6 @@ dependencies {
     implementation(Dependencies.SpringCloud.EUREKA_CLIENT)
     implementation(Dependencies.SpringCloud.RESILIENCE4J)
     implementation(Dependencies.Observability.MICROMETER_PROMETHEUS)
-    implementation(Dependencies.Docs.SPRINGDOC)
 
     testImplementation(Dependencies.Test.SPRING_BOOT_TEST)
 }

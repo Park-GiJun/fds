@@ -1,7 +1,8 @@
 package com.gijun.fds.generator.infrastructure.adapter.out.client
 
-import com.gijun.fds.generator.domain.model.TransactionData
 import com.gijun.fds.generator.application.port.out.TransactionSendPort
+import com.gijun.fds.generator.domain.model.TransactionData
+import com.gijun.fds.generator.infrastructure.adapter.out.client.dto.TransactionSendRequest
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -21,7 +22,7 @@ class KtorTransactionSendAdapter(
         return try {
             val response = httpClient.post(targetUrl) {
                 contentType(ContentType.Application.Json)
-                setBody(transaction)
+                setBody(transaction.toRequest())
             }
             response.status.isSuccess()
         } catch (e: Exception) {
@@ -29,4 +30,19 @@ class KtorTransactionSendAdapter(
             false
         }
     }
+
+    private fun TransactionData.toRequest() = TransactionSendRequest(
+        transactionId = transactionId,
+        userId = userId,
+        cardNumber = cardNumber,
+        amount = amount,
+        currency = currency,
+        merchantName = merchantName,
+        merchantCategory = merchantCategory,
+        country = country,
+        city = city,
+        latitude = latitude,
+        longitude = longitude,
+        timestamp = timestamp,
+    )
 }

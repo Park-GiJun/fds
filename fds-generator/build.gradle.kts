@@ -1,5 +1,5 @@
 plugins {
-    id("fds-spring-boot")
+    id("fds-spring-boot-service")
 }
 
 dependencies {

@@ -1,7 +1,8 @@
 package com.gijun.fds.generator.infrastructure.adapter.`in`.web
 
-import com.gijun.fds.generator.domain.model.GeneratorStatus
 import com.gijun.fds.generator.application.port.`in`.GeneratorUseCase
+import com.gijun.fds.generator.domain.model.GeneratorStatus
+import com.gijun.fds.generator.infrastructure.adapter.`in`.web.dto.GeneratorStatusResponse
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -14,15 +15,15 @@ class GeneratorWebAdapter(
     fun start(
         @RequestParam(defaultValue = "100") rate: Int,
         @RequestParam(defaultValue = "0.05") fraudRatio: Double,
-    ): GeneratorStatus {
+    ): GeneratorStatusResponse {
         generatorUseCase.start(rate, fraudRatio)
-        return generatorUseCase.getStatus()
+        return generatorUseCase.getStatus().toResponse()
     }
 
     @PostMapping("/stop")
-    fun stop(): GeneratorStatus {
+    fun stop(): GeneratorStatusResponse {
         generatorUseCase.stop()
-        return generatorUseCase.getStatus()
+        return generatorUseCase.getStatus().toResponse()
     }
 
     @PostMapping("/burst")
@@ -39,5 +40,12 @@ class GeneratorWebAdapter(
     }
 
     @GetMapping("/status")
-    fun status(): GeneratorStatus = generatorUseCase.getStatus()
+    fun status(): GeneratorStatusResponse = generatorUseCase.getStatus().toResponse()
+
+    private fun GeneratorStatus.toResponse() = GeneratorStatusResponse(
+        running = running,
+        totalSent = totalSent,
+        totalFailed = totalFailed,
+        configuredRate = configuredRate,
+    )
 }

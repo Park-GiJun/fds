@@ -7,8 +7,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.atomic.AtomicInteger
-import java.util.concurrent.atomic.AtomicLong
 
 @Component
 class RateLimitFilter : OncePerRequestFilter() {
@@ -33,21 +31,21 @@ class RateLimitFilter : OncePerRequestFilter() {
     }
 
     private class TokenBucket(private val maxTokens: Int, private val refillIntervalMs: Long) {
-        private val tokens = AtomicInteger(maxTokens)
-        private val lastRefill = AtomicLong(System.currentTimeMillis())
+        private var tokens = maxTokens
+        private var lastRefill = System.currentTimeMillis()
 
+        @Synchronized
         fun tryConsume(): Boolean {
-            refill()
-            return tokens.getAndUpdate { if (it > 0) it - 1 else 0 } > 0
-        }
-
-        private fun refill() {
             val now = System.currentTimeMillis()
-            val last = lastRefill.get()
-            val elapsed = now - last
-
-            if (elapsed >= refillIntervalMs && lastRefill.compareAndSet(last, now)) {
-                tokens.set(maxTokens)
+            if (now - lastRefill >= refillIntervalMs) {
+                tokens = maxTokens
+                lastRefill = now
+            }
+            return if (tokens > 0) {
+                tokens--
+                true
+            } else {
+                false
             }
         }
     }
