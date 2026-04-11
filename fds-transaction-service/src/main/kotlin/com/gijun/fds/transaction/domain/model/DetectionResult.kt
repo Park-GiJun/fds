@@ -1,14 +1,14 @@
-package com.gijun.fds.common.event
+package com.gijun.fds.transaction.domain.model
 
 import com.gijun.fds.common.domain.RiskLevel
 import java.time.Instant
 
-data class DetectionResultEvent(
+data class DetectionResult(
     val detectionId: String,
     val transactionId: String,
     val userId: String,
     val riskLevel: RiskLevel,
-    val ruleNames: List<String>,
     val riskScore: Int,
-    val timestamp: Instant,
+    val triggeredRules: List<String>,
+    val detectedAt: Instant,
 )
