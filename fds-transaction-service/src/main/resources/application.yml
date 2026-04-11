@@ -6,6 +6,10 @@ spring:
     name: fds-transaction-service
   config:
     import: optional:configserver:http://localhost:8761
+  cloud:
+    config:
+      username: ${CONFIG_USERNAME:config}
+      password: ${CONFIG_PASSWORD:config-secret}
   # Config Server 미접속 시 fallback
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/fds_transaction

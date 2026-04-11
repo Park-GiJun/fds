@@ -3,6 +3,7 @@ package com.gijun.fds.transaction.infrastructure.adapter.outbound.persistence.de
 import com.gijun.fds.common.domain.RiskLevel
 import com.gijun.fds.transaction.domain.model.DetectionResult
 import jakarta.persistence.*
+import tools.jackson.databind.ObjectMapper
 import java.time.Instant
 
 @Entity
@@ -45,17 +46,20 @@ class DetectionResultEntity(
     )
 
     companion object {
+        private val objectMapper = ObjectMapper()
+
         fun fromDomain(domain: DetectionResult) = DetectionResultEntity(
             detectionId = domain.detectionId,
             transactionId = domain.transactionId,
             userId = domain.userId,
             riskLevel = domain.riskLevel,
             riskScore = domain.riskScore,
-            triggeredRules = domain.triggeredRules.joinToString(","),
+            triggeredRules = objectMapper.writeValueAsString(domain.triggeredRules),
             detectedAt = domain.detectedAt,
         )
 
         private fun parseRules(raw: String): List<String> =
-            if (raw.isBlank()) emptyList() else raw.split(",")
+            if (raw.isBlank()) emptyList()
+            else objectMapper.readValue(raw, objectMapper.typeFactory.constructCollectionType(List::class.java, String::class.java))
     }
 }
