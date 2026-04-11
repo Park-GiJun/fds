@@ -1,33 +1,11 @@
 package com.gijun.fds.gateway.infrastructure.config
 
-import org.junit.jupiter.api.BeforeEach
+import com.gijun.fds.gateway.support.AbstractSecurityTest
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import org.springframework.web.context.WebApplicationContext
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@ActiveProfiles("test")
-class SecurityConfigTest {
-
-    @Autowired
-    private lateinit var context: WebApplicationContext
-
-    private lateinit var mockMvc: MockMvc
-
-    @BeforeEach
-    fun setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context)
-            .apply<DefaultMockMvcBuilder>(SecurityMockMvcConfigurers.springSecurity())
-            .build()
-    }
+class SecurityConfigTest : AbstractSecurityTest() {
 
     @Test
     fun `actuator health는 인증 없이 접근 가능하다`() {
