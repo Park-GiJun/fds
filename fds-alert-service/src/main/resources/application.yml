@@ -5,9 +5,9 @@ spring:
   application:
     name: fds-alert-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/fds_alert
-    username: fds
-    password: fds
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/fds_alert}
+    username: ${DB_USERNAME:fds}
+    password: ${DB_PASSWORD:}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -20,7 +20,7 @@ spring:
   flyway:
     enabled: true
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     consumer:
       group-id: alert-group
       auto-offset-reset: earliest
@@ -30,8 +30,8 @@ spring:
         spring.json.trusted.packages: com.gijun.fds.*
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
 
 eureka:
   client:
