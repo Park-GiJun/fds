@@ -34,7 +34,7 @@ class KtorTransactionSendAdapter(
     private fun TransactionData.toRequest() = TransactionSendRequest(
         transactionId = transactionId,
         userId = userId,
-        cardNumber = cardNumber,
+        maskedCardNumber = com.gijun.fds.common.security.CardMasking.mask(cardNumber),
         amount = amount,
         currency = currency,
         merchantName = merchantName,

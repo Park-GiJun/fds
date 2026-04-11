@@ -16,7 +16,13 @@ data class TransactionData(
     val latitude: Double,
     val longitude: Double,
     val timestamp: Instant,
-)
+) {
+    override fun toString(): String =
+        "TransactionData(transactionId=$transactionId, userId=$userId, " +
+            "cardNumber=****${cardNumber.takeLast(4)}, amount=$amount, currency=$currency, " +
+            "merchantName=$merchantName, merchantCategory=$merchantCategory, " +
+            "country=$country, city=$city)"
+}
 
 enum class FraudType {
     HIGH_AMOUNT,
