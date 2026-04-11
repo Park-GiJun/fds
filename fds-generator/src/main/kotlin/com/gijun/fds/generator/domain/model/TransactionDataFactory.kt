@@ -50,7 +50,7 @@ object TransactionDataFactory {
         return TransactionData(
             transactionId = UUID.randomUUID().toString(),
             userId = users[userIndex],
-            cardNumber = cards[userIndex],
+            cardNumber = CardNumber(cards[userIndex]),
             amount = BigDecimal(Random.nextInt(amountRange.first, amountRange.last)),
             currency = if (merchant.country == "KR") "KRW" else "USD",
             merchantName = merchant.name,
@@ -68,7 +68,7 @@ object TransactionDataFactory {
         val base = createNormal().copy(
             transactionId = UUID.randomUUID().toString(),
             userId = users[userIndex],
-            cardNumber = cards[userIndex],
+            cardNumber = CardNumber(cards[userIndex]),
             timestamp = Instant.now(),
         )
 
