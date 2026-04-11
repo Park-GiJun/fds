@@ -43,6 +43,10 @@ object Dependencies {
         const val FLYWAY_POSTGRESQL = "org.flywaydb:flyway-database-postgresql"
     }
 
+    object Cache {
+        const val CAFFEINE = "com.github.ben-manes.caffeine:caffeine:${Versions.CAFFEINE}"
+    }
+
     object Observability {
         const val MICROMETER_PROMETHEUS = "io.micrometer:micrometer-registry-prometheus"
     }
