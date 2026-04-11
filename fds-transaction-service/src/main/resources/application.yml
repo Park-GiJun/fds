@@ -5,49 +5,8 @@ spring:
   application:
     name: fds-transaction-service
   config:
-    import: optional:configserver:http://localhost:8761
+    import: configserver:http://localhost:8761
   cloud:
     config:
       username: ${CONFIG_USERNAME:config}
       password: ${CONFIG_PASSWORD:config-secret}
-  # Config Server 미접속 시 fallback
-  datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/fds_transaction
-    username: ${DB_USERNAME:fds}
-    password: ${DB_PASSWORD:}
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    open-in-view: false
-    properties:
-      hibernate:
-        format_sql: true
-        default_batch_fetch_size: 100
-  flyway:
-    enabled: true
-  kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-    consumer:
-      group-id: transaction-group
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: com.gijun.fds.*
-  elasticsearch:
-    uris: ${ELASTICSEARCH_URIS:http://localhost:9200}
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,prometheus
