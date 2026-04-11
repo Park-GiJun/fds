@@ -139,4 +139,32 @@ class GeneratorServiceTest {
         status2.running shouldBe true
         status2.configuredRate shouldBe 10
     }
+
+    @Test
+    fun `shutdown 호출 후 start가 동작하지 않는다`() {
+        // given
+        coEvery { transactionSendPort.send(any()) } returns true
+
+        // when
+        sut.shutdown()
+
+        // then — shutdown 후에는 scope가 취소되어 start해도 정상 동작 불가
+        sut.getStatus().running shouldBe false
+    }
+
+    @Test
+    fun `start와 stop을 반복해도 상태가 정확하다`() {
+        // given
+        coEvery { transactionSendPort.send(any()) } returns true
+
+        // when — start → stop → start → stop
+        sut.start(rate = 1, fraudRatio = 0.0)
+        sut.getStatus().running shouldBe true
+        sut.stop()
+        sut.getStatus().running shouldBe false
+
+        sut.start(rate = 5, fraudRatio = 0.0)
+        sut.getStatus().running shouldBe true
+        sut.getStatus().configuredRate shouldBe 5
+    }
 }
