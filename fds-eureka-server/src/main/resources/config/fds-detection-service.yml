@@ -1,12 +1,4 @@
-server:
-  port: 8082
-
 spring:
-  application:
-    name: fds-detection-service
-  config:
-    import: optional:configserver:http://localhost:8761
-  # Config Server 미접속 시 fallback
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     consumer:
@@ -24,14 +16,3 @@ spring:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,prometheus

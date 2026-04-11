@@ -4,42 +4,5 @@ server:
 spring:
   application:
     name: fds-alert-service
-  datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/fds_alert}
-    username: ${DB_USERNAME:fds}
-    password: ${DB_PASSWORD:}
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    open-in-view: false
-    properties:
-      hibernate:
-        format_sql: true
-        default_batch_fetch_size: 100
-  flyway:
-    enabled: true
-  kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
-    consumer:
-      group-id: alert-group
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: com.gijun.fds.*
-  data:
-    redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,prometheus
+  config:
+    import: optional:configserver:http://localhost:8761

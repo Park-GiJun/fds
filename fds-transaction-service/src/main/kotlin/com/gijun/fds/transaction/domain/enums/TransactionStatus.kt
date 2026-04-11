@@ -1,4 +1,4 @@
-package com.gijun.fds.transaction.domain.model
+package com.gijun.fds.transaction.domain.enums
 
 enum class TransactionStatus {
     PENDING,

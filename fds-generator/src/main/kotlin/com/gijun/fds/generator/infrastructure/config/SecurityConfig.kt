@@ -16,7 +16,7 @@ import org.springframework.security.web.SecurityFilterChain
 @Configuration
 class SecurityConfig(
     @Value("\${security.admin.username:\${ADMIN_USERNAME:admin}}") private val adminUsername: String,
-    @Value("\${security.admin.password:\${ADMIN_PASSWORD}}") private val adminPassword: String,
+    @Value("\${security.admin.password:\${ADMIN_PASSWORD:admin}}") private val adminPassword: String,
 ) {
 
     @Bean

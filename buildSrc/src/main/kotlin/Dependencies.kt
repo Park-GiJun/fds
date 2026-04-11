@@ -17,6 +17,8 @@ object Dependencies {
         const val GATEWAY_MVC = "org.springframework.cloud:spring-cloud-gateway-server-webmvc"
         const val EUREKA_CLIENT = "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
         const val RESILIENCE4J = "org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j"
+        const val CONFIG_SERVER = "org.springframework.cloud:spring-cloud-config-server"
+        const val CONFIG_CLIENT = "org.springframework.cloud:spring-cloud-starter-config"
     }
 
     object Kotlin {

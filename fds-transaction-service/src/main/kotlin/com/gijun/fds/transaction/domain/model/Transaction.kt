@@ -2,6 +2,7 @@ package com.gijun.fds.transaction.domain.model
 
 import com.gijun.fds.common.domain.RiskLevel
 import com.gijun.fds.common.security.CardMasking
+import com.gijun.fds.transaction.domain.enums.TransactionStatus
 import java.math.BigDecimal
 import java.time.Instant
 

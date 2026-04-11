@@ -1,12 +1,4 @@
-server:
-  port: 8081
-
 spring:
-  application:
-    name: fds-transaction-service
-  config:
-    import: optional:configserver:http://localhost:8761
-  # Config Server 미접속 시 fallback
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/fds_transaction
     username: ${DB_USERNAME:fds}
@@ -36,14 +28,3 @@ spring:
         spring.json.trusted.packages: com.gijun.fds.*
   elasticsearch:
     uris: ${ELASTICSEARCH_URIS:http://localhost:9200}
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,prometheus

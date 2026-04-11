@@ -1,0 +1,11 @@
+# 전 서비스 공통 설정 — Config Server에서 배포
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus

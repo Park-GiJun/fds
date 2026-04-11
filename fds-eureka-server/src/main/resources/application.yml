@@ -4,6 +4,13 @@ server:
 spring:
   application:
     name: fds-eureka-server
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/config
 
 eureka:
   client:

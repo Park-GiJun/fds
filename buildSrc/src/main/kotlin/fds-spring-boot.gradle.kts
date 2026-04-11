@@ -17,6 +17,7 @@ dependencies {
     implementation(Dependencies.Spring.SECURITY)
     implementation(Dependencies.Jackson.KOTLIN_MODULE)
     implementation(Dependencies.SpringCloud.EUREKA_CLIENT)
+    implementation(Dependencies.SpringCloud.CONFIG_CLIENT)
     implementation(Dependencies.SpringCloud.RESILIENCE4J)
     implementation(Dependencies.Observability.MICROMETER_PROMETHEUS)
 

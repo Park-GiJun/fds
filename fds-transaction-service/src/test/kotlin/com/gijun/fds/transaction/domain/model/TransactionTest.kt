@@ -1,6 +1,7 @@
 package com.gijun.fds.transaction.domain.model
 
 import com.gijun.fds.common.domain.RiskLevel
+import com.gijun.fds.transaction.domain.enums.TransactionStatus
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
