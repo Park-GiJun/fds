@@ -12,6 +12,10 @@
 - 도메인 모델은 HTTP 응답으로 직접 노출 금지 → infrastructure 계층에 Response DTO 분리
 - UseCase 구현체 네이밍: `{Resource}Handler` (Service, Impl 사용 금지)
 - inbound adapter 위치: `infrastructure.adapter.inbound` (web, filter 등)
+- Spring 어노테이션 정책:
+  - `application/handler`: @Bean 수동 등록만 (infrastructure/config에서 등록)
+  - `infrastructure/adapter`: @Component 허용 (infrastructure 계층이므로 Spring 의존 허용)
+  - `infrastructure/config`: @Configuration + @Bean
 - non-const val은 camelCase, const val만 SCREAMING_SNAKE_CASE
 - 한국어 커밋 메시지 사용
 
