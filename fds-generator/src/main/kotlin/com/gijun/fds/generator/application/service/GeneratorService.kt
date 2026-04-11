@@ -102,7 +102,11 @@ class GeneratorService(
                         semaphore.acquire()
                         try {
                             val tx = generateTransaction(fraudRatio)
-                            transactionSendPort.send(tx)
+                            if (transactionSendPort.send(tx)) {
+                                totalSent.incrementAndGet()
+                            } else {
+                                totalFailed.incrementAndGet()
+                            }
                         } finally {
                             semaphore.release()
                         }
