@@ -30,4 +30,22 @@ class SecurityConfigTest : AbstractSecurityTest() {
         mockMvc.perform(get("/unknown/path"))
             .andExpect(status().isUnauthorized)
     }
+
+    @Test
+    fun `actuator info는 인증 없이 접근 가능하다`() {
+        mockMvc.perform(get("/actuator/info"))
+            .andExpect(status().isOk)
+    }
+
+    @Test
+    fun `detections API는 미인증 시 401을 반환한다`() {
+        mockMvc.perform(get("/api/v1/detections/test"))
+            .andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    fun `alerts API는 미인증 시 401을 반환한다`() {
+        mockMvc.perform(get("/api/v1/alerts/test"))
+            .andExpect(status().isUnauthorized)
+    }
 }
