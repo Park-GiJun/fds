@@ -53,4 +53,22 @@ class SecurityConfigTest {
         mockMvc.perform(get("/unknown/path"))
             .andExpect(status().isUnauthorized)
     }
+
+    @Test
+    fun `actuator info는 인증 없이 접근 가능하다`() {
+        mockMvc.perform(get("/actuator/info"))
+            .andExpect(status().isOk)
+    }
+
+    @Test
+    fun `generator stop은 미인증 시 401을 반환한다`() {
+        mockMvc.perform(post("/api/v1/generator/stop"))
+            .andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    fun `generator burst는 미인증 시 401을 반환한다`() {
+        mockMvc.perform(post("/api/v1/generator/burst"))
+            .andExpect(status().isUnauthorized)
+    }
 }
