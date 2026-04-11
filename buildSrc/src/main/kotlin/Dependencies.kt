@@ -4,6 +4,7 @@ object Dependencies {
         const val WEB = "org.springframework.boot:spring-boot-starter-web"
         const val ACTUATOR = "org.springframework.boot:spring-boot-starter-actuator"
         const val VALIDATION = "org.springframework.boot:spring-boot-starter-validation"
+        const val SECURITY = "org.springframework.boot:spring-boot-starter-security"
         const val JPA = "org.springframework.boot:spring-boot-starter-data-jpa"
         const val KAFKA = "org.springframework.boot:spring-boot-starter-kafka"
         const val REDIS = "org.springframework.boot:spring-boot-starter-data-redis"
@@ -56,6 +57,7 @@ object Dependencies {
 
     object Test {
         const val SPRING_BOOT_TEST = "org.springframework.boot:spring-boot-starter-test"
+        const val SPRING_SECURITY_TEST = "org.springframework.boot:spring-boot-starter-security-test"
         const val KOTLIN_TEST = "org.jetbrains.kotlin:kotlin-test-junit5"
         const val JUNIT_LAUNCHER = "org.junit.platform:junit-platform-launcher"
 
