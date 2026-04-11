@@ -6,7 +6,7 @@ import java.time.Instant
 data class TransactionSendRequest(
     val transactionId: String,
     val userId: String,
-    val cardNumber: String,
+    val maskedCardNumber: String,
     val amount: BigDecimal,
     val currency: String,
     val merchantName: String,

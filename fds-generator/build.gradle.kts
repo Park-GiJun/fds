@@ -3,6 +3,8 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":fds-common"))
+
     // Coroutines (Generator 내부 동시 전송용)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 
