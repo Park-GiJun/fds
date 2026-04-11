@@ -1,0 +1,15 @@
+server:
+  port: 0
+
+spring:
+  application:
+    name: fds-generator-test
+
+generator:
+  target-url: http://localhost:9999/api/v1/transactions
+  rate: 1
+  burst-rate: 10
+
+eureka:
+  client:
+    enabled: false
