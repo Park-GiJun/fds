@@ -26,6 +26,22 @@
   - `doc/memory/domain-glossary.md` — 도메인 용어 사전
   - `doc/memory/review-checklist.md` — 기술/품질 체크리스트
 
+### `/commit` — 커밋 메시지 자동 생성 + 커밋
+변경 사항을 분석하여 한국어 커밋 메시지를 자동 생성하고 커밋한다.
+- 에이전트 "송준호" (Commit Craft) — 커밋 메시지 전문가
+- 형식: `{타입}: {한국어 요약}` (feat/fix/refactor/perf/test/security/chore/docs/build)
+- 브랜치명에서 이슈 번호 자동 추출 → `Refs #번호` 자동 추가
+- 빌드 검증 후 커밋 (빌드 실패 시 중단)
+
+### `/ship` — PR 생성 → merge 자동화
+현재 브랜치를 push하고 master 대상 PR을 생성한다.
+- `/ship` — PR 생성
+- `/ship --merge` — PR 생성 + 즉시 squash merge
+- `/ship --draft` — Draft PR 생성
+- 에이전트 "오세린" (Ship Captain) — PR 메시지 전문가
+- 에이전트 "강민재" (Gate Keeper) — merge 전 체크리스트 검증
+- 이슈 자동 연결 + PR 코멘트 + merge 후 브랜치 삭제
+
 ### `/create-issue-branch` — 이슈 기반 브랜치 생성
 이슈 번호를 받아 라벨 기반 prefix + slug로 브랜치를 자동 생성한다.
 - `/create-issue-branch 1` — 단일 이슈 브랜치
@@ -59,7 +75,38 @@
 | 최민준 | Tech Lead | Reviewer 1~3 종합, 기술 심각도, 반복 실수 추적 | project-context, review-checklist |
 | 한소율 | Quality Lead | Reviewer 4~6 종합, 품질 심각도, 학습 추출 | domain-glossary, review-checklist |
 
-### 리뷰 흐름
+**Git 워크플로우 에이전트**
+| 이름 | 역할 | 담당 커맨드 |
+|------|------|------------|
+| 송준호 | Commit Craft | `/commit` — 커밋 메시지 자동 생성 |
+| 오세린 | Ship Captain | `/ship` — PR 제목/본문 생성 |
+| 강민재 | Gate Keeper | `/ship --merge` — merge 전 체크리스트 검증 |
+
+### 전체 워크플로우
+
+```
+/create-issue-branch {번호}     ← 이슈 브랜치 생성
+         │
+         ▼
+    코딩 작업
+         │
+         ▼
+    /commit                      ← 송준호: 커밋 메시지 생성 + 빌드 검증
+         │
+         ▼
+    /ship                        ← 오세린: PR 생성
+         │
+         ▼
+    /review                      ← 6인 리뷰 + 2인 리드
+         │
+         ▼
+    /ship --merge                ← 강민재: 체크리스트 → squash merge
+         │
+         ▼
+    이슈 자동 close + 브랜치 삭제
+```
+
+### 리뷰 흐름 (상세)
 
 ```
 /init-review (1회)
@@ -70,11 +117,11 @@
     └── 용어 사전 생성
          │
          ▼
-코딩 → 커밋 → /review (반복)
-                │
-                ├── 6명 리뷰 (병렬)
-                ├── 2명 리드 종합 (순차)
-                ├── doc/review/ 기록
+코딩 → /commit → /ship → /review (반복)
+                           │
+                           ├── 6명 리뷰 (병렬)
+                           ├── 2명 리드 종합 (순차)
+                           ├── doc/review/ 기록
                 ├── doc/lessons/ 학습
                 └── doc/memory/ 누적 업데이트
                      │
