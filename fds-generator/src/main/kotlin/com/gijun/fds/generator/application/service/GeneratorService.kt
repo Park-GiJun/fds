@@ -34,6 +34,9 @@ class GeneratorService(
     private var job: Job? = null
 
     override fun start(rate: Int, fraudRatio: Double) {
+        require(rate > 0) { "rate must be positive, got $rate" }
+        require(fraudRatio in 0.0..1.0) { "fraudRatio must be in [0.0, 1.0], got $fraudRatio" }
+
         if (running.getAndSet(true)) {
             log.warn("Generator is already running")
             return
@@ -87,6 +90,8 @@ class GeneratorService(
     }
 
     override fun burst(count: Int, fraudRatio: Double) {
+        require(count > 0) { "count must be positive, got $count" }
+        require(fraudRatio in 0.0..1.0) { "fraudRatio must be in [0.0, 1.0], got $fraudRatio" }
         log.info("Burst mode: sending {} transactions (fraudRatio={})", count, fraudRatio)
 
         scope.launch {
