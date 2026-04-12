@@ -5,6 +5,7 @@ import com.gijun.fds.transaction.application.port.inbound.GetTransactionUseCase
 import com.gijun.fds.transaction.application.port.inbound.RegisterTransactionUseCase
 import com.gijun.fds.transaction.infrastructure.adapter.inbound.web.transaction.dto.RegisterTransactionRequest
 import com.gijun.fds.transaction.infrastructure.adapter.inbound.web.transaction.dto.TransactionResponse
+import com.gijun.fds.transaction.infrastructure.adapter.inbound.web.transaction.dto.toResponse
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -29,7 +30,7 @@ class TransactionWebAdapter(
         val transaction = registerTransactionUseCase.register(request.toCommand())
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(ApiResponse.created(TransactionResponse.from(transaction)))
+            .body(ApiResponse.created(transaction.toResponse()))
     }
 
     @GetMapping("/{transactionId}")
@@ -37,6 +38,6 @@ class TransactionWebAdapter(
         @PathVariable transactionId: String,
     ): ResponseEntity<ApiResponse<TransactionResponse>> {
         val transaction = getTransactionUseCase.getByTransactionId(transactionId)
-        return ResponseEntity.ok(ApiResponse.success(TransactionResponse.from(transaction)))
+        return ResponseEntity.ok(ApiResponse.success(transaction.toResponse()))
     }
 }
