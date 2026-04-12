@@ -34,7 +34,7 @@
 ## 품질 체크리스트 (Quality Lead)
 
 ### Code Quality
-- [ ] UseCase 구현체 클래스명: `{Resource}Service` (Handler, Impl 사용 금지)
+- [ ] UseCase 구현체 클래스명: `{Resource}Handler` (Service/Impl 사용 금지 — 2026-04-12 컨벤션 전환)
 - [ ] in-port 인터페이스: `{Resource}UseCase`
 - [ ] out-port 인터페이스: `{Action}{Resource}Port`
 - [ ] 웹 어댑터: `{Name}WebAdapter`
