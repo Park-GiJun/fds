@@ -135,14 +135,15 @@
 ## 반복 실수 패턴
 (리뷰에서 2회 이상 지적된 항목)
 
-- **카드번호 평문 취급**: Baseline SEC-001 + 4회 리뷰. 저장 경로는 2026-04-12 `CardEncryptor` 포트로 차단(#86) ✅. 단, `Transaction` 도메인 모델 `cardNumber` 원문 필드는 여전히 보유 — lessons 권장사항 미반영. ⚠️ **남은 vector (RF-6)**.
-- **ConcurrentHashMap 무한 증가**: Baseline PERF-001 + 2회 리뷰 → Caffeine + CAS. ✅ **해결.**
-- **인증/보안 설계 후순위화**: 3회 반복. BCrypt/엔드포인트 인증으로 대폭 개선. ⚠️ Generator denyAll 누락 잔존.
-- **신규 계층 테스트 0건**: 2·3·4차 리뷰 연속 지적. 489688d remediation에서 Handler 단위 1개만 추가, Adapter/WebAdapter/Filter/VO/Config 여전히 0건. ⚠️ **패턴 지속 (RF-2, RF-3)**.
+- **카드번호 평문 취급**: 5회차 리뷰. 도메인 모델 원문 필드는 #150으로 제거 ✅. 단, `TransactionPersistencePort.save(tx, plainCardNumber)` 시그니처로 port 경계에서 plaintext 재노출 (AF-2). ⚠️ **vector 이동 5번째**.
+- **ConcurrentHashMap 무한 증가**: ✅ **해결.**
+- **인증/보안 설계 후순위화**: 3회 반복. BCrypt/엔드포인트 인증으로 개선. ⚠️ Generator denyAll 누락 잔존.
+- **신규 계층 테스트 0건**: ✅ **해결** — session-final에서 36건 추가 (Handler/WebAdapter/ExceptionHandler/Converter/VO 커버).
 - **CONFIG_PASSWORD 기본값 미제거**: 2회 반복. ⚠️ 반복 실수.
-- **메모리 문서 표류**: `review-checklist.md`의 UseCase 명명 동기화 완료 ✅. CLAUDE.md `@Transactional` 예외 미명시는 신규 드리프트 (RF-5).
-- **Remediation-induced regression**: 489688d에서 `logback-spring.xml` 전체 재작성 시 기존 FILE appender/framework logger 손실 의심. ⚠️ **신규 패턴 — 설정 파일은 patch 모드 필수**. (RF-1)
-- **학습(lessons) 미반영**: lessons 문서에 "권장사항"을 적고 이슈화하지 않으면 다음 sprint에서 휘발. 2026-04-12 card-number-handling.md가 그 예시 — 저장 암호화만 이슈화되고 도메인 모델 원문 필드 제거는 다음 리뷰까지 잊혔음. ⚠️ **신규 패턴**.
+- **Remediation-induced regression**: 489688d → a388dba 2회차 지속. logback 재작성(해결), 이번엔 Passthrough fail-open default + port plaintext 누출 신규. ⚠️ **3-cycle 고착**.
+- **학습(lessons) 미반영**: lessons 권장사항이 실행 가능한 이슈로 전환되지 않으면 휘발. ⚠️ 패턴 유지.
+- **🆕 Agent interpretation drift**: 이슈 본문과 에이전트 프롬프트 불일치 시 에이전트는 프롬프트만 따름. #118이 "fail-closed opt-in" 요구했으나 프롬프트에 "default true for dev convenience" 포함 → 의도 역행. **에이전트 프롬프트 작성 전 원 이슈 본문 재독 강제화 필요**. doc/lessons/agent-prompt-specificity.md.
+- **🆕 Dead scaffold shipping**: #116 @Disabled 스캐폴드가 의존성 1줄로 활성화 가능한데 defer 상태로 master 반영. Scaffold는 실질 가치 0 — 완성 또는 미시작 중 택일.
 
 ## 미확정 사항 (팀 합의 완료/필요)
 - [x] in-port 패키지 위치: `application.port.in` 확정 (2026-04-12)
