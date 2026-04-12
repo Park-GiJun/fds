@@ -1,6 +1,6 @@
 package com.gijun.fds.transaction.infrastructure.adapter.inbound.web.transaction.dto
 
-import com.gijun.fds.transaction.application.port.inbound.RegisterTransactionCommand
+import com.gijun.fds.transaction.application.dto.command.RegisterTransactionCommand
 import jakarta.validation.constraints.DecimalMax
 import jakarta.validation.constraints.DecimalMin
 import jakarta.validation.constraints.NotBlank
