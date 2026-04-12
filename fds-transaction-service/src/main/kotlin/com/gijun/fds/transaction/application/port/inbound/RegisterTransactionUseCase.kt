@@ -3,7 +3,7 @@ package com.gijun.fds.transaction.application.port.inbound
 import com.gijun.fds.transaction.domain.model.Transaction
 import java.math.BigDecimal
 
-fun interface RegisterTransactionUseCase {
+interface RegisterTransactionUseCase {
     fun register(command: RegisterTransactionCommand): Transaction
 }
 
