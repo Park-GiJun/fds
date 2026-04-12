@@ -28,7 +28,7 @@ class TransactionHandlerTest {
         every { it.encrypt(any()) } answers { "enc:${firstArg<String>()}" }
     }
 
-    private fun command(id: String = "TX-001"): RegisterTransactionCommand = RegisterTransactionCommand(
+    private fun command(id: String = "TX-000001"): RegisterTransactionCommand = RegisterTransactionCommand(
         transactionId = id,
         userId = "U-1",
         cardNumber = "4111111111111111",
@@ -51,7 +51,7 @@ class TransactionHandlerTest {
 
         val result = handler.register(command())
 
-        result.transactionId shouldBe "TX-001"
+        result.transactionId shouldBe "TX-000001"
         result.status shouldBe TransactionStatus.PENDING
         result.createdAt shouldBe fixedInstant
         result.updatedAt shouldBe fixedInstant
@@ -64,9 +64,9 @@ class TransactionHandlerTest {
     fun `register — 어댑터가 DomainAlreadyExistsException을 던지면 그대로 전파한다`() {
         val repo = mockk<TransactionPersistencePort>()
         val handler = TransactionHandler(repo, encryptor(), fixedClock)
-        every { repo.save(any()) } throws DomainAlreadyExistsException("이미 등록된 거래입니다: TX-DUP")
+        every { repo.save(any()) } throws DomainAlreadyExistsException("이미 등록된 거래입니다: TX-DUP-01")
 
-        assertThrows<DomainAlreadyExistsException> { handler.register(command("TX-DUP")) }
+        assertThrows<DomainAlreadyExistsException> { handler.register(command("TX-DUP-01")) }
     }
 
     @Test
