@@ -1,6 +1,5 @@
 package com.gijun.fds.transaction.application.handler
 
-import com.gijun.fds.common.exception.DomainAlreadyExistsException
 import com.gijun.fds.common.exception.DomainNotFoundException
 import com.gijun.fds.transaction.application.port.inbound.GetTransactionUseCase
 import com.gijun.fds.transaction.application.port.inbound.RegisterTransactionCommand
@@ -16,9 +15,6 @@ class TransactionHandler(
 ) : RegisterTransactionUseCase, GetTransactionUseCase {
 
     override fun register(command: RegisterTransactionCommand): Transaction {
-        if (transactionRepository.existsByTransactionId(command.transactionId)) {
-            throw DomainAlreadyExistsException("이미 등록된 거래입니다: ${command.transactionId}")
-        }
         val transaction = Transaction.create(
             transactionId = command.transactionId,
             userId = command.userId,
