@@ -3,12 +3,14 @@
 
     <conversionRule conversionWord="mask"
                     converterClass="com.gijun.fds.transaction.infrastructure.config.logging.CardNumberMaskingConverter"/>
+    <conversionRule conversionWord="maskEx"
+                    converterClass="com.gijun.fds.transaction.infrastructure.config.logging.CardNumberMaskingThrowableConverter"/>
 
     <property name="LOG_PATTERN"
-              value="%d{HH:mm:ss.SSS} %highlight(%-5level) %magenta([%15.15thread]) %cyan(%-40.40logger{39}) : %mask%n"/>
+              value="%d{HH:mm:ss.SSS} %highlight(%-5level) %magenta([%15.15thread]) %cyan(%-40.40logger{39}) : %mask%n%maskEx"/>
 
     <property name="FILE_PATTERN"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} : %mask%n"/>
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} : %mask%n%maskEx"/>
 
     <!-- Console -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
