@@ -5,4 +5,8 @@ spring:
   application:
     name: fds-alert-service
   config:
-    import: optional:configserver:http://localhost:8761
+    import: configserver:${CONFIG_SERVER_URL:http://localhost:8761}
+  cloud:
+    config:
+      username: ${CONFIG_USERNAME:config}
+      password: ${CONFIG_PASSWORD}

@@ -11,6 +11,10 @@ spring:
       server:
         native:
           search-locations: classpath:/config
+  security:
+    user:
+      name: ${CONFIG_USERNAME:config}
+      password: ${CONFIG_PASSWORD}
 
 eureka:
   client:

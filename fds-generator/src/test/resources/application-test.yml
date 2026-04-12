@@ -17,3 +17,8 @@ security:
 eureka:
   client:
     enabled: false
+
+spring:
+  cloud:
+    config:
+      enabled: false

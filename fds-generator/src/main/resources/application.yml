@@ -5,21 +5,8 @@ spring:
   application:
     name: fds-generator
   config:
-    import: optional:configserver:http://localhost:8761
-
-# Config Server 미접속 시 fallback
-generator:
-  target-url: http://localhost:8080/api/v1/transactions
-  rate: 100
-  burst-rate: 10000
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,prometheus
+    import: configserver:${CONFIG_SERVER_URL:http://localhost:8761}
+  cloud:
+    config:
+      username: ${CONFIG_USERNAME:config}
+      password: ${CONFIG_PASSWORD}

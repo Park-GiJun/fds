@@ -78,6 +78,11 @@
 - [ ] Generator /actuator/** 전체 공개 → health/info만 축소 필요
 - [ ] SecurityConfig 통합 테스트 부재 — 보안 회귀 위험
 
+### High (2026-04-12 Config fallback 제거 리뷰 신규)
+- [ ] Config Server + Eureka SPOF — fds-eureka-server 단일 노드 장애 시 전 서비스 기동 불가, 운영 전환 전 분리 필수
+- [ ] 테스트 프로파일 Config Server 의존 — `@SpringBootTest` 실행 시 `spring.cloud.config.enabled=false` 미설정 시 CI 기동 실패
+- [ ] CONFIG_PASSWORD 기본값 `config-secret` 운영 프로파일 미제거 (2회 반복 지적)
+
 ### High (기존 — 미해결)
 - [ ] HikariCP 기본 10 pool (목표 10K TPS에 1/10 수준)
 - [ ] Kafka 단일 파티션 (consumer 병렬성 불가)
@@ -116,6 +121,7 @@
 - **ConcurrentHashMap 무한 증가**: Baseline PERF-001 + 2회 리뷰 → Caffeine + CAS. ✅ **해결.** (over-refill race는 Medium Tech Debt)
 - **인증/보안 설계 후순위화**: 3회 반복(Baseline → 1차 리뷰 → 2차 리뷰). BCrypt/엔드포인트 인증으로 대폭 개선. ⚠️ 단, Generator denyAll 누락 잔존.
 - **보안 컴포넌트 무테스트**: SecurityConfig 2개 작성 후 테스트 0개. 2차 리뷰에서 지적. ⚠️ 신규 패턴.
+- **CONFIG_PASSWORD 기본값 미제거**: 2차 리뷰 + Config fallback 제거 리뷰 2회 지적. `config-secret` 기본값이 운영에 노출될 위험. ⚠️ 반복 실수.
 
 ## 미확정 사항 (팀 합의 완료/필요)
 - [x] in-port 패키지 위치: `application.port.in` 확정 (2026-04-12)
