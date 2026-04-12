@@ -68,16 +68,16 @@ data class Transaction(
         fun create(
             transactionId: String, userId: String,
             plainCardNumber: String, encryptedCardNumber: String,
-            amount: BigDecimal, currency: String, merchantName: String,
-            merchantCategory: String, country: String, city: String,
+            amount: BigDecimal, currency: CurrencyCode, merchantName: String,
+            merchantCategory: String, country: CountryCode, city: String,
             latitude: Double, longitude: Double, now: Instant,
         ) = Transaction(
             transactionId = transactionId, userId = userId,
             maskedCardNumber = CardMasking.mask(plainCardNumber),
             encryptedCardNumber = encryptedCardNumber,
-            amount = amount, currency = CurrencyCode(currency),
+            amount = amount, currency = currency,
             merchantName = merchantName, merchantCategory = merchantCategory,
-            country = CountryCode(country), city = city,
+            country = country, city = city,
             latitude = latitude, longitude = longitude,
             createdAt = now, updatedAt = now,
         )

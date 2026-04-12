@@ -178,9 +178,9 @@ class TransactionTest {
             transactionId = "tx-002", userId = "USER_00002",
             plainCardNumber = "4111222233334444",
             encryptedCardNumber = "enc-fixture",
-            amount = BigDecimal(10000), currency = "KRW",
+            amount = BigDecimal(10000), currency = CurrencyCode("KRW"),
             merchantName = "테스트", merchantCategory = "TEST",
-            country = "KOR", city = "서울",
+            country = CountryCode("KOR"), city = "서울",
             latitude = 37.0, longitude = 127.0, now = now,
         )
         tx.maskedCardNumber shouldContain "4444"
