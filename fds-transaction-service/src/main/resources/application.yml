@@ -14,4 +14,4 @@ spring:
 fds:
   crypto:
     passthrough:
-      enabled: ${FDS_CRYPTO_PASSTHROUGH_ENABLED:true}
+      enabled: ${FDS_CRYPTO_PASSTHROUGH_ENABLED:false}
