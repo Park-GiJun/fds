@@ -8,5 +8,4 @@ import org.springframework.stereotype.Component
 @ConditionalOnProperty(prefix = "fds.crypto.passthrough", name = ["enabled"], havingValue = "true")
 class PassthroughCardEncryptor : CardEncryptor {
     override fun encrypt(plain: String): String = plain
-    override fun decrypt(cipher: String): String = cipher
 }
