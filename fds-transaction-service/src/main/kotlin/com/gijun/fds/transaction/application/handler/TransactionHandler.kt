@@ -6,6 +6,7 @@ import com.gijun.fds.transaction.application.port.inbound.RegisterTransactionCom
 import com.gijun.fds.transaction.application.port.inbound.RegisterTransactionUseCase
 import com.gijun.fds.transaction.application.port.outbound.TransactionRepository
 import com.gijun.fds.transaction.domain.model.Transaction
+import org.springframework.transaction.annotation.Transactional
 import java.time.Clock
 import java.time.Instant
 
@@ -14,6 +15,7 @@ class TransactionHandler(
     private val clock: Clock,
 ) : RegisterTransactionUseCase, GetTransactionUseCase {
 
+    @Transactional
     override fun register(command: RegisterTransactionCommand): Transaction {
         val transaction = Transaction.create(
             transactionId = command.transactionId,
@@ -32,6 +34,7 @@ class TransactionHandler(
         return transactionRepository.save(transaction)
     }
 
+    @Transactional(readOnly = true)
     override fun getByTransactionId(transactionId: String): Transaction =
         transactionRepository.findByTransactionId(transactionId)
             ?: throw DomainNotFoundException("거래를 찾을 수 없습니다: $transactionId")
