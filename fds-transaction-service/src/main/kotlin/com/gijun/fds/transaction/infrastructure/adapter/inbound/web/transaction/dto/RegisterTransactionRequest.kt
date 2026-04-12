@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Size
 import java.math.BigDecimal
 
 data class RegisterTransactionRequest(
-    @field:NotBlank @field:Size(max = 36) val transactionId: String,
+    @field:NotBlank @field:Pattern(regexp = "^[A-Za-z0-9-]{8,36}$", message = "transactionId는 영숫자/하이픈 8-36자여야 합니다") val transactionId: String,
     @field:NotBlank @field:Size(max = 20) val userId: String,
     @field:NotBlank @field:Size(min = 13, max = 19) val cardNumber: String,
     @field:DecimalMin("0.01") val amount: BigDecimal,
