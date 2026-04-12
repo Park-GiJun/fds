@@ -1,6 +1,6 @@
 package com.gijun.fds.transaction.infrastructure.adapter.inbound.web.transaction
 
-import com.gijun.fds.common.web.CommonApiResponse
+import com.gijun.fds.transaction.infrastructure.adapter.inbound.web.response.ApiResponse
 import com.gijun.fds.transaction.application.port.inbound.GetTransactionUseCase
 import com.gijun.fds.transaction.application.port.inbound.RegisterTransactionUseCase
 import com.gijun.fds.transaction.infrastructure.adapter.inbound.web.transaction.dto.RegisterTransactionRequest
@@ -25,18 +25,18 @@ class TransactionWebAdapter(
     @PostMapping
     fun register(
         @Valid @RequestBody request: RegisterTransactionRequest,
-    ): ResponseEntity<CommonApiResponse<TransactionResponse>> {
+    ): ResponseEntity<ApiResponse<TransactionResponse>> {
         val transaction = registerTransactionUseCase.register(request.toCommand())
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(CommonApiResponse.created(TransactionResponse.from(transaction)))
+            .body(ApiResponse.created(TransactionResponse.from(transaction)))
     }
 
     @GetMapping("/{transactionId}")
     fun getOne(
         @PathVariable transactionId: String,
-    ): ResponseEntity<CommonApiResponse<TransactionResponse>> {
+    ): ResponseEntity<ApiResponse<TransactionResponse>> {
         val transaction = getTransactionUseCase.getByTransactionId(transactionId)
-        return ResponseEntity.ok(CommonApiResponse.success(TransactionResponse.from(transaction)))
+        return ResponseEntity.ok(ApiResponse.success(TransactionResponse.from(transaction)))
     }
 }
