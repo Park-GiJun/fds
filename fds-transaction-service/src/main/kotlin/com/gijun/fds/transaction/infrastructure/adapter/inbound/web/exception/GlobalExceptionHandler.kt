@@ -7,7 +7,7 @@ import com.gijun.fds.common.exception.DomainConflictException
 import com.gijun.fds.common.exception.DomainInvalidStateException
 import com.gijun.fds.common.exception.DomainNotFoundException
 import com.gijun.fds.common.exception.DomainValidationException
-import com.gijun.fds.common.web.CommonApiResponse
+import com.gijun.fds.transaction.infrastructure.adapter.inbound.web.response.ApiResponse
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -30,7 +30,7 @@ class GlobalExceptionHandler {
     fun handleConflict(e: DomainConflictException) = build(HttpStatus.CONFLICT, e.message, "CONFLICT")
 
     @ExceptionHandler(DomainValidationException::class)
-    fun handleValidation(e: DomainValidationException): ResponseEntity<CommonApiResponse<Nothing>> {
+    fun handleValidation(e: DomainValidationException): ResponseEntity<ApiResponse<Nothing>> {
         log.debug("Domain validation failed: {}", e.message)
         return build(HttpStatus.BAD_REQUEST, "요청 값이 유효하지 않습니다", "VALIDATION_FAILED")
     }
@@ -45,7 +45,7 @@ class GlobalExceptionHandler {
     fun handleAccess(e: DomainAccessDeniedException) = build(HttpStatus.FORBIDDEN, e.message, "ACCESS_DENIED")
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleBeanValidation(e: MethodArgumentNotValidException): ResponseEntity<CommonApiResponse<Nothing>> {
+    fun handleBeanValidation(e: MethodArgumentNotValidException): ResponseEntity<ApiResponse<Nothing>> {
         if (log.isDebugEnabled) {
             log.debug(
                 "Bean validation failed: {}",
@@ -57,11 +57,11 @@ class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception::class)
-    fun handleUnexpected(e: Exception): ResponseEntity<CommonApiResponse<Nothing>> {
+    fun handleUnexpected(e: Exception): ResponseEntity<ApiResponse<Nothing>> {
         log.error("Unexpected error", e)
         return build(HttpStatus.INTERNAL_SERVER_ERROR, "내부 오류가 발생했습니다", "INTERNAL_ERROR")
     }
 
-    private fun build(status: HttpStatus, message: String?, code: String): ResponseEntity<CommonApiResponse<Nothing>> =
-        ResponseEntity.status(status).body(CommonApiResponse.error(message ?: status.reasonPhrase, code))
+    private fun build(status: HttpStatus, message: String?, code: String): ResponseEntity<ApiResponse<Nothing>> =
+        ResponseEntity.status(status).body(ApiResponse.error(message ?: status.reasonPhrase, code))
 }
