@@ -1,8 +1,8 @@
 package com.gijun.fds.transaction.application.handler
 
 import com.gijun.fds.common.exception.DomainNotFoundException
+import com.gijun.fds.transaction.application.dto.command.RegisterTransactionCommand
 import com.gijun.fds.transaction.application.port.inbound.GetTransactionUseCase
-import com.gijun.fds.transaction.application.port.inbound.RegisterTransactionCommand
 import com.gijun.fds.transaction.application.port.inbound.RegisterTransactionUseCase
 import com.gijun.fds.transaction.application.port.outbound.TransactionPersistencePort
 import com.gijun.fds.transaction.domain.model.Transaction
