@@ -1,6 +1,7 @@
 package com.gijun.fds.transaction.infrastructure.adapter.inbound.web.transaction.dto
 
 import com.gijun.fds.transaction.application.port.inbound.RegisterTransactionCommand
+import jakarta.validation.constraints.DecimalMax
 import jakarta.validation.constraints.DecimalMin
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
@@ -16,8 +17,8 @@ data class RegisterTransactionRequest(
     @field:NotBlank @field:Size(max = 30) val merchantCategory: String,
     @field:NotBlank @field:Size(min = 3, max = 3) val country: String,
     @field:NotBlank @field:Size(max = 50) val city: String,
-    val latitude: Double,
-    val longitude: Double,
+    @field:DecimalMin("-90.0") @field:DecimalMax("90.0") val latitude: Double,
+    @field:DecimalMin("-180.0") @field:DecimalMax("180.0") val longitude: Double,
 ) {
     fun toCommand(): RegisterTransactionCommand = RegisterTransactionCommand(
         transactionId = transactionId,
