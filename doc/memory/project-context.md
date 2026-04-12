@@ -40,7 +40,9 @@
 - [x] 테스트 코드 48개 (fds-common, fds-generator, fds-gateway)
 
 ### 미구현
-- [ ] fds-transaction-service (일부 구현 — 2026-04-12 `TransactionWebAdapter` + application 계층 + persistence adapter 완성 / DetectionResult 적용 UseCase 미구현 / 테스트 0건 / 카드번호 암호화 미적용)
+- [ ] fds-transaction-service (2026-04-12 기준: WebAdapter + application(port/handler) + persistence adapter + CardEncryptor 포트 + PassthroughCardEncryptor 스텁 + GlobalExceptionHandler + Handler 단위 테스트 4건 + Logback PAN 마스킹 + lat/lon 검증 + currency/country Pattern + transactionId 정책 완료 / DetectionResult 적용 UseCase·통합 테스트·실제 KMS 구현체 미구현)
+- [ ] fds-transaction-service Transaction 도메인 모델 `cardNumber` 원문 필드 제거 (follow-up RF-6)
+- [ ] fds-transaction-service Testcontainers 통합 테스트 (Adapter/WebAdapter) (follow-up RF-2, RF-3)
 - [ ] fds-detection-service (비즈니스 로직 — Application.kt stub만 존재)
 - [ ] fds-alert-service (비즈니스 로직 — Application.kt stub만 존재)
 - [ ] k6 부하 테스트
@@ -78,15 +80,21 @@
 - [ ] Generator /actuator/** 전체 공개 → health/info만 축소 필요
 - [ ] SecurityConfig 통합 테스트 부재 — 보안 회귀 위험
 
-### Critical (2026-04-12 8cfdaae 리뷰 신규 — ⚠️ master 반영됨)
-- [ ] **카드번호 DB 평문 저장**: `TransactionPersistenceAdapter.save`가 `encryptedCardNumber = transaction.cardNumber`로 평문 저장. 컬럼명 `encrypted_card_number`로 위장돼 있어 감사 치명적. PCI-DSS 3.4 위반. KMS 기반 `CardEncryptor` 아웃포트 신설 필수. **프로덕션 배포 차단.**
+### Critical (8cfdaae 리뷰) — ✅ 모두 해결
+- [x] ~~카드번호 DB 평문 저장~~ → 2026-04-12 `CardEncryptor` 포트 + `PassthroughCardEncryptor` 스텁 (#86)
 
-### High (2026-04-12 8cfdaae 리뷰 신규)
-- [ ] Domain 예외 → HTTP 매핑 부재 (`@RestControllerAdvice` 없음) — `DomainNotFoundException`/`DomainAlreadyExistsException` 모두 500 반환
-- [ ] `TransactionWebAdapter`/`TransactionHandler`/`TransactionPersistenceAdapter` 테스트 0건
-- [ ] `latitude`/`longitude` 범위 검증 없음 — Geo Velocity 규칙 오탐/미탐 유발
-- [ ] 요청 바디/예외 로그 `cardNumber` 마스킹 정책 미수립 (Logback Filter + MDC)
-- [ ] `@Transactional` 위치가 infrastructure adapter — 복수 adapter 합성 전 application 계층으로 이동 필요
+### High (8cfdaae 리뷰) — 대부분 해결
+- [x] ~~Domain 예외 → HTTP 매핑~~ → GlobalExceptionHandler (#87)
+- [x] ~~lat/lon 범위 검증~~ → @DecimalMin/@DecimalMax (#89)
+- [x] ~~cardNumber 로그 마스킹~~ → Logback %mask Converter (#91)
+- [x] ~~@Transactional 위치~~ → application handler로 이동 (#92) — ⚠️ CLAUDE.md 예외 규정 미명시 (follow-up RF-5)
+- [🟡] `TransactionHandler` 단위 테스트만 추가 (#88) — Adapter/WebAdapter 통합 테스트 여전히 누락 (follow-up RF-2, RF-3)
+
+### High (2026-04-12 489688d follow-up 리뷰 신규)
+- [ ] `logback-spring.xml` 간소화 regression — 기존 FILE appender/framework logger/springProfile 손실 의심 (RF-1)
+- [ ] `TransactionPersistenceAdapter` Testcontainers 통합 테스트 부재 (RF-2)
+- [ ] `TransactionWebAdapter` MockMvc 테스트 부재 (RF-3)
+- [ ] `Transaction` 도메인 모델 `cardNumber` 원문 필드 제거 — lessons.md 권장사항 미반영 (RF-6)
 
 ### High (2026-04-12 Config fallback 제거 리뷰 신규)
 - [ ] Config Server + Eureka SPOF — fds-eureka-server 단일 노드 장애 시 전 서비스 기동 불가, 운영 전환 전 분리 필수
@@ -127,12 +135,14 @@
 ## 반복 실수 패턴
 (리뷰에서 2회 이상 지적된 항목)
 
-- **카드번호 평문 취급**: Baseline SEC-001 + 4회 리뷰. 전송/마스킹/VO는 해결됐으나 2026-04-12 8cfdaae 리뷰에서 **저장 경로 평문(encrypted_* 컬럼에 평문 유입)** 으로 축 이동 재발. `doc/lessons/card-number-handling.md` 참조. ⚠️ **미해결 — 축 이동형 재발**.
+- **카드번호 평문 취급**: Baseline SEC-001 + 4회 리뷰. 저장 경로는 2026-04-12 `CardEncryptor` 포트로 차단(#86) ✅. 단, `Transaction` 도메인 모델 `cardNumber` 원문 필드는 여전히 보유 — lessons 권장사항 미반영. ⚠️ **남은 vector (RF-6)**.
 - **ConcurrentHashMap 무한 증가**: Baseline PERF-001 + 2회 리뷰 → Caffeine + CAS. ✅ **해결.**
 - **인증/보안 설계 후순위화**: 3회 반복. BCrypt/엔드포인트 인증으로 대폭 개선. ⚠️ Generator denyAll 누락 잔존.
-- **신규 계층 테스트 0건**: "보안 컴포넌트 무테스트"(2차 리뷰)로 최초 등록 → 8cfdaae에서 application/infrastructure 전반으로 확장 (`TransactionHandler`, `TransactionPersistenceAdapter`, `TransactionWebAdapter` 모두 테스트 없음). ⚠️ **패턴 확장**.
+- **신규 계층 테스트 0건**: 2·3·4차 리뷰 연속 지적. 489688d remediation에서 Handler 단위 1개만 추가, Adapter/WebAdapter/Filter/VO/Config 여전히 0건. ⚠️ **패턴 지속 (RF-2, RF-3)**.
 - **CONFIG_PASSWORD 기본값 미제거**: 2회 반복. ⚠️ 반복 실수.
-- **메모리 문서 표류**: `review-checklist.md`의 UseCase 구현체 명명이 `{Resource}Service`로 남아있으나 현재 CLAUDE.md는 `{Resource}Handler`. 컨벤션 전환 시 메모리 동기화 누락. ⚠️ 신규 패턴.
+- **메모리 문서 표류**: `review-checklist.md`의 UseCase 명명 동기화 완료 ✅. CLAUDE.md `@Transactional` 예외 미명시는 신규 드리프트 (RF-5).
+- **Remediation-induced regression**: 489688d에서 `logback-spring.xml` 전체 재작성 시 기존 FILE appender/framework logger 손실 의심. ⚠️ **신규 패턴 — 설정 파일은 patch 모드 필수**. (RF-1)
+- **학습(lessons) 미반영**: lessons 문서에 "권장사항"을 적고 이슈화하지 않으면 다음 sprint에서 휘발. 2026-04-12 card-number-handling.md가 그 예시 — 저장 암호화만 이슈화되고 도메인 모델 원문 필드 제거는 다음 리뷰까지 잊혔음. ⚠️ **신규 패턴**.
 
 ## 미확정 사항 (팀 합의 완료/필요)
 - [x] in-port 패키지 위치: `application.port.in` 확정 (2026-04-12)
