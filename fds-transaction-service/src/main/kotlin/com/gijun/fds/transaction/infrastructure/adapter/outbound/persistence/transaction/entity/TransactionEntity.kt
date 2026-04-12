@@ -73,6 +73,7 @@ class TransactionEntity(
         transactionId = transactionId,
         userId = userId,
         maskedCardNumber = maskedCardNumber,
+        encryptedCardNumber = encryptedCardNumber,
         amount = amount,
         currency = CurrencyCode(currency),
         merchantName = merchantName,
@@ -96,10 +97,10 @@ class TransactionEntity(
     }
 
     companion object {
-        fun fromDomain(domain: Transaction, encryptedCardNumber: String) = TransactionEntity(
+        fun fromDomain(domain: Transaction) = TransactionEntity(
             transactionId = domain.transactionId,
             userId = domain.userId,
-            encryptedCardNumber = encryptedCardNumber,
+            encryptedCardNumber = domain.encryptedCardNumber,
             maskedCardNumber = domain.maskedCardNumber,
             amount = domain.amount,
             currency = domain.currency.value,

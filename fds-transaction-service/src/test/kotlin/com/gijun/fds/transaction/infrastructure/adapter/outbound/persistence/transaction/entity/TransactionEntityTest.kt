@@ -19,6 +19,7 @@ class TransactionEntityTest {
         transactionId = "tx-001",
         userId = "USER_00001",
         maskedCardNumber = "411122******4444",
+        encryptedCardNumber = "enc-fixture",
         amount = BigDecimal(50000),
         currency = CurrencyCode("KRW"),
         merchantName = "스타벅스",
@@ -34,11 +35,11 @@ class TransactionEntityTest {
     @Test
     fun `fromDomain으로 생성된 Entity의 필드가 정확하다`() {
         val domain = createDomain()
-        val entity = TransactionEntity.fromDomain(domain, encryptedCardNumber = "ENCRYPTED_VALUE")
+        val entity = TransactionEntity.fromDomain(domain)
 
         entity.transactionId shouldBe "tx-001"
         entity.userId shouldBe "USER_00001"
-        entity.encryptedCardNumber shouldBe "ENCRYPTED_VALUE"
+        entity.encryptedCardNumber shouldBe "enc-fixture"
         entity.maskedCardNumber shouldBe "411122******4444"
         entity.amount shouldBe BigDecimal(50000)
         entity.status shouldBe TransactionStatus.PENDING
@@ -46,16 +47,16 @@ class TransactionEntityTest {
 
     @Test
     fun `toDomain 변환 시 maskedCardNumber가 복원된다 — 도메인은 원문을 보유하지 않는다`() {
-        val entity = TransactionEntity.fromDomain(createDomain(), "ENCRYPTED")
+        val entity = TransactionEntity.fromDomain(createDomain())
         val domain = entity.toDomain()
 
         domain.maskedCardNumber shouldBe "411122******4444"
-        domain.maskedCardNumber shouldNotBe "ENCRYPTED"
+        domain.maskedCardNumber shouldNotBe "enc-fixture"
     }
 
     @Test
     fun `toDomain 변환 시 모든 필드가 매핑된다`() {
-        val entity = TransactionEntity.fromDomain(createDomain(), "ENC")
+        val entity = TransactionEntity.fromDomain(createDomain())
         val domain = entity.toDomain()
 
         domain.transactionId shouldBe "tx-001"
@@ -70,7 +71,7 @@ class TransactionEntityTest {
 
     @Test
     fun `updateFromDomain으로 상태 업데이트가 반영된다`() {
-        val entity = TransactionEntity.fromDomain(createDomain(), "ENC")
+        val entity = TransactionEntity.fromDomain(createDomain())
         val updatedDomain = createDomain().applyDetectionResult(
             riskLevel = RiskLevel.HIGH,
             riskScore = 80,

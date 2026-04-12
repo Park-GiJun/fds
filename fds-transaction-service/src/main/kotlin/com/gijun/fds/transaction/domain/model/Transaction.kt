@@ -12,6 +12,7 @@ data class Transaction(
     val transactionId: String,
     val userId: String,
     val maskedCardNumber: String,
+    val encryptedCardNumber: String,
     val amount: BigDecimal,
     val currency: CurrencyCode,
     val merchantName: String,
@@ -65,13 +66,15 @@ data class Transaction(
         const val MAX_RISK_SCORE = 100
 
         fun create(
-            transactionId: String, userId: String, cardNumber: String,
+            transactionId: String, userId: String,
+            plainCardNumber: String, encryptedCardNumber: String,
             amount: BigDecimal, currency: String, merchantName: String,
             merchantCategory: String, country: String, city: String,
             latitude: Double, longitude: Double, now: Instant,
         ) = Transaction(
             transactionId = transactionId, userId = userId,
-            maskedCardNumber = CardMasking.mask(cardNumber),
+            maskedCardNumber = CardMasking.mask(plainCardNumber),
+            encryptedCardNumber = encryptedCardNumber,
             amount = amount, currency = CurrencyCode(currency),
             merchantName = merchantName, merchantCategory = merchantCategory,
             country = CountryCode(country), city = city,

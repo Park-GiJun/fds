@@ -58,7 +58,8 @@ class TransactionWebAdapterTest {
     private fun sampleTx(): Transaction = Transaction.create(
         transactionId = "TX-00000001",
         userId = "U-1",
-        cardNumber = "4111111111111111",
+        plainCardNumber = "4111111111111111",
+        encryptedCardNumber = "enc:4111111111111111",
         amount = BigDecimal("1000.00"),
         currency = "USD",
         merchantName = "Amazon",
