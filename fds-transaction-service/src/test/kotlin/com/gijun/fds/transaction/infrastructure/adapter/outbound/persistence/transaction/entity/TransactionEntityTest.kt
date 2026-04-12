@@ -16,7 +16,6 @@ class TransactionEntityTest {
     private fun createDomain() = Transaction(
         transactionId = "tx-001",
         userId = "USER_00001",
-        cardNumber = "test-card-0001",
         maskedCardNumber = "411122******4444",
         amount = BigDecimal(50000),
         currency = "KRW",
@@ -44,13 +43,12 @@ class TransactionEntityTest {
     }
 
     @Test
-    fun `toDomain 변환 시 cardNumber에 maskedCardNumber가 들어간다`() {
+    fun `toDomain 변환 시 maskedCardNumber가 복원된다 — 도메인은 원문을 보유하지 않는다`() {
         val entity = TransactionEntity.fromDomain(createDomain(), "ENCRYPTED")
         val domain = entity.toDomain()
 
-        domain.cardNumber shouldBe "411122******4444"
         domain.maskedCardNumber shouldBe "411122******4444"
-        domain.cardNumber shouldNotBe "ENCRYPTED"
+        domain.maskedCardNumber shouldNotBe "ENCRYPTED"
     }
 
     @Test

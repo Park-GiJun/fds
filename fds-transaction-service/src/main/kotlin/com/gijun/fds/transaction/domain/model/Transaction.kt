@@ -9,7 +9,6 @@ import java.time.Instant
 data class Transaction(
     val transactionId: String,
     val userId: String,
-    val cardNumber: String,
     val maskedCardNumber: String,
     val amount: BigDecimal,
     val currency: String,
@@ -70,7 +69,6 @@ data class Transaction(
             latitude: Double, longitude: Double, now: Instant,
         ) = Transaction(
             transactionId = transactionId, userId = userId,
-            cardNumber = cardNumber,
             maskedCardNumber = CardMasking.mask(cardNumber),
             amount = amount, currency = currency,
             merchantName = merchantName, merchantCategory = merchantCategory,

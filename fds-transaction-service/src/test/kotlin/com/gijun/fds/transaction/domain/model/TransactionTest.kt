@@ -19,7 +19,6 @@ class TransactionTest {
     ) = Transaction(
         transactionId = "tx-001",
         userId = "USER_00001",
-        cardNumber = "test-card-0001",
         maskedCardNumber = "******0001",
         amount = BigDecimal(50000),
         currency = "KRW",
