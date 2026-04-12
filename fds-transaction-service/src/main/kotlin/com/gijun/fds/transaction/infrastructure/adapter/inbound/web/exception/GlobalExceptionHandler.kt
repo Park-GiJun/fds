@@ -30,7 +30,10 @@ class GlobalExceptionHandler {
     fun handleConflict(e: DomainConflictException) = build(HttpStatus.CONFLICT, e.message, "CONFLICT")
 
     @ExceptionHandler(DomainValidationException::class)
-    fun handleValidation(e: DomainValidationException) = build(HttpStatus.BAD_REQUEST, e.message, "VALIDATION_FAILED")
+    fun handleValidation(e: DomainValidationException): ResponseEntity<CommonApiResponse<Nothing>> {
+        log.debug("Domain validation failed: {}", e.message)
+        return build(HttpStatus.BAD_REQUEST, "요청 값이 유효하지 않습니다", "VALIDATION_FAILED")
+    }
 
     @ExceptionHandler(DomainInvalidStateException::class)
     fun handleInvalidState(e: DomainInvalidStateException) = build(HttpStatus.UNPROCESSABLE_ENTITY, e.message, "INVALID_STATE")
@@ -43,8 +46,14 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleBeanValidation(e: MethodArgumentNotValidException): ResponseEntity<CommonApiResponse<Nothing>> {
-        val msg = e.bindingResult.fieldErrors.joinToString(", ") { "${it.field}: ${it.defaultMessage}" }
-        return build(HttpStatus.BAD_REQUEST, msg, "VALIDATION_FAILED")
+        if (log.isDebugEnabled) {
+            log.debug(
+                "Bean validation failed: {}",
+                e.bindingResult.fieldErrors.joinToString(", ") { "${it.field}: ${it.defaultMessage}" },
+            )
+        }
+        val fields = e.bindingResult.fieldErrors.joinToString(", ") { it.field }
+        return build(HttpStatus.BAD_REQUEST, "다음 필드의 값이 유효하지 않습니다: $fields", "VALIDATION_FAILED")
     }
 
     @ExceptionHandler(Exception::class)
