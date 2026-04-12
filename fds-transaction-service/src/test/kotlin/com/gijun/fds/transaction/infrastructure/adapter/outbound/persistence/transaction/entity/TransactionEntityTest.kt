@@ -3,6 +3,8 @@ package com.gijun.fds.transaction.infrastructure.adapter.outbound.persistence.tr
 import com.gijun.fds.common.domain.RiskLevel
 import com.gijun.fds.transaction.domain.enums.TransactionStatus
 import com.gijun.fds.transaction.domain.model.Transaction
+import com.gijun.fds.transaction.domain.vo.CountryCode
+import com.gijun.fds.transaction.domain.vo.CurrencyCode
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.Test
@@ -18,10 +20,10 @@ class TransactionEntityTest {
         userId = "USER_00001",
         maskedCardNumber = "411122******4444",
         amount = BigDecimal(50000),
-        currency = "KRW",
+        currency = CurrencyCode("KRW"),
         merchantName = "스타벅스",
         merchantCategory = "CAFE",
-        country = "KR",
+        country = CountryCode("KOR"),
         city = "서울",
         latitude = 37.5665,
         longitude = 126.9780,
@@ -59,9 +61,9 @@ class TransactionEntityTest {
         domain.transactionId shouldBe "tx-001"
         domain.userId shouldBe "USER_00001"
         domain.amount shouldBe BigDecimal(50000)
-        domain.currency shouldBe "KRW"
+        domain.currency shouldBe CurrencyCode("KRW")
         domain.merchantName shouldBe "스타벅스"
-        domain.country shouldBe "KR"
+        domain.country shouldBe CountryCode("KOR")
         domain.status shouldBe TransactionStatus.PENDING
         domain.riskLevel shouldBe null
     }

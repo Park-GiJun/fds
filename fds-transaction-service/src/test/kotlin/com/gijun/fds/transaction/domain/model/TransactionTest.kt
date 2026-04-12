@@ -2,6 +2,8 @@ package com.gijun.fds.transaction.domain.model
 
 import com.gijun.fds.common.domain.RiskLevel
 import com.gijun.fds.transaction.domain.enums.TransactionStatus
+import com.gijun.fds.transaction.domain.vo.CountryCode
+import com.gijun.fds.transaction.domain.vo.CurrencyCode
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
@@ -21,10 +23,10 @@ class TransactionTest {
         userId = "USER_00001",
         maskedCardNumber = "******0001",
         amount = BigDecimal(50000),
-        currency = "KRW",
+        currency = CurrencyCode("KRW"),
         merchantName = "스타벅스",
         merchantCategory = "CAFE",
-        country = "KR",
+        country = CountryCode("KOR"),
         city = "서울",
         latitude = 37.5665,
         longitude = 126.9780,
@@ -176,7 +178,7 @@ class TransactionTest {
             cardNumber = "4111222233334444",
             amount = BigDecimal(10000), currency = "KRW",
             merchantName = "테스트", merchantCategory = "TEST",
-            country = "KR", city = "서울",
+            country = "KOR", city = "서울",
             latitude = 37.0, longitude = 127.0, now = now,
         )
         tx.maskedCardNumber shouldContain "4444"
