@@ -15,10 +15,10 @@ class TransactionPersistenceAdapter(
     private val cardEncryptor: CardEncryptor,
 ) : TransactionPersistencePort {
 
-    override fun save(transaction: Transaction): Transaction {
+    override fun save(transaction: Transaction, plainCardNumber: String): Transaction {
         val entity = TransactionEntity.fromDomain(
             transaction,
-            encryptedCardNumber = cardEncryptor.encrypt(transaction.cardNumber),
+            encryptedCardNumber = cardEncryptor.encrypt(plainCardNumber),
         )
         return try {
             transactionJpaRepository.save(entity).toDomain()

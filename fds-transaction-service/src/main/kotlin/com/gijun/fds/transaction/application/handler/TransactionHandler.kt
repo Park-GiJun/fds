@@ -31,7 +31,7 @@ class TransactionHandler(
             longitude = command.longitude,
             now = Instant.now(clock),
         )
-        return transactionPersistencePort.save(transaction)
+        return transactionPersistencePort.save(transaction, command.cardNumber)
     }
 
     @Transactional(readOnly = true)

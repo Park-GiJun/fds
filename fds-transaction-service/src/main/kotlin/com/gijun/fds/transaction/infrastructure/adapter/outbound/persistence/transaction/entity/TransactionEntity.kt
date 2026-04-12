@@ -70,7 +70,6 @@ class TransactionEntity(
     fun toDomain(): Transaction = Transaction(
         transactionId = transactionId,
         userId = userId,
-        cardNumber = maskedCardNumber,
         maskedCardNumber = maskedCardNumber,
         amount = amount,
         currency = currency,
