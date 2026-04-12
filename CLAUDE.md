@@ -11,6 +11,11 @@
 - application은 port 인터페이스만 의존 (port 위치: `application.port.inbound`, `application.port.outbound`)
 - 도메인 모델은 HTTP 응답으로 직접 노출 금지 → infrastructure 계층에 Response DTO 분리
 - UseCase 구현체 네이밍: `{Resource}Handler` (Service, Impl 사용 금지)
+- 아웃바운드 포트 네이밍: `{Domain}{Infra}Port` — `Infra`는 인프라 유형별 고정 접미어
+  - Kafka/이벤트 → `Message` (e.g., `TransactionMessagePort`)
+  - DB/JPA → `Persistence` (e.g., `TransactionPersistencePort`)
+  - Redis → `Cache` (e.g., `RateLimitCachePort`)
+  - Elasticsearch → `Search` (e.g., `TransactionSearchPort`)
 - inbound adapter 위치: `infrastructure.adapter.inbound` (web, filter 등)
 - Spring 어노테이션 정책:
   - `application/handler`: @Bean 수동 등록만 (infrastructure/config에서 등록)

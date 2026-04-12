@@ -1,7 +1,7 @@
 package com.gijun.fds.transaction.infrastructure.config
 
 import com.gijun.fds.transaction.application.handler.TransactionHandler
-import com.gijun.fds.transaction.application.port.outbound.TransactionRepository
+import com.gijun.fds.transaction.application.port.outbound.TransactionPersistencePort
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.time.Clock
@@ -14,7 +14,7 @@ class TransactionApplicationConfig {
 
     @Bean
     fun transactionHandler(
-        transactionRepository: TransactionRepository,
+        transactionPersistencePort: TransactionPersistencePort,
         clock: Clock,
-    ): TransactionHandler = TransactionHandler(transactionRepository, clock)
+    ): TransactionHandler = TransactionHandler(transactionPersistencePort, clock)
 }

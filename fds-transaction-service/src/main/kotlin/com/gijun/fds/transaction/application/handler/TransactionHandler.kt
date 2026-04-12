@@ -4,14 +4,14 @@ import com.gijun.fds.common.exception.DomainNotFoundException
 import com.gijun.fds.transaction.application.port.inbound.GetTransactionUseCase
 import com.gijun.fds.transaction.application.port.inbound.RegisterTransactionCommand
 import com.gijun.fds.transaction.application.port.inbound.RegisterTransactionUseCase
-import com.gijun.fds.transaction.application.port.outbound.TransactionRepository
+import com.gijun.fds.transaction.application.port.outbound.TransactionPersistencePort
 import com.gijun.fds.transaction.domain.model.Transaction
 import org.springframework.transaction.annotation.Transactional
 import java.time.Clock
 import java.time.Instant
 
 class TransactionHandler(
-    private val transactionRepository: TransactionRepository,
+    private val transactionPersistencePort: TransactionPersistencePort,
     private val clock: Clock,
 ) : RegisterTransactionUseCase, GetTransactionUseCase {
 
@@ -31,11 +31,11 @@ class TransactionHandler(
             longitude = command.longitude,
             now = Instant.now(clock),
         )
-        return transactionRepository.save(transaction)
+        return transactionPersistencePort.save(transaction)
     }
 
     @Transactional(readOnly = true)
     override fun getByTransactionId(transactionId: String): Transaction =
-        transactionRepository.findByTransactionId(transactionId)
+        transactionPersistencePort.findByTransactionId(transactionId)
             ?: throw DomainNotFoundException("거래를 찾을 수 없습니다: $transactionId")
 }

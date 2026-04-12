@@ -3,7 +3,7 @@ package com.gijun.fds.transaction.application.handler
 import com.gijun.fds.common.exception.DomainAlreadyExistsException
 import com.gijun.fds.common.exception.DomainNotFoundException
 import com.gijun.fds.transaction.application.port.inbound.RegisterTransactionCommand
-import com.gijun.fds.transaction.application.port.outbound.TransactionRepository
+import com.gijun.fds.transaction.application.port.outbound.TransactionPersistencePort
 import com.gijun.fds.transaction.domain.enums.TransactionStatus
 import com.gijun.fds.transaction.domain.model.Transaction
 import io.kotest.matchers.shouldBe
@@ -39,7 +39,7 @@ class TransactionHandlerTest {
 
     @Test
     fun `register — 신규 거래를 저장하고 저장된 도메인을 반환한다`() {
-        val repo = mockk<TransactionRepository>()
+        val repo = mockk<TransactionPersistencePort>()
         val handler = TransactionHandler(repo, fixedClock)
         val saved = slot<Transaction>()
         every { repo.save(capture(saved)) } answers { saved.captured }
@@ -56,7 +56,7 @@ class TransactionHandlerTest {
 
     @Test
     fun `register — 어댑터가 DomainAlreadyExistsException을 던지면 그대로 전파한다`() {
-        val repo = mockk<TransactionRepository>()
+        val repo = mockk<TransactionPersistencePort>()
         val handler = TransactionHandler(repo, fixedClock)
         every { repo.save(any()) } throws DomainAlreadyExistsException("이미 등록된 거래입니다: TX-DUP")
 
@@ -65,7 +65,7 @@ class TransactionHandlerTest {
 
     @Test
     fun `getByTransactionId — 존재하면 도메인을 반환한다`() {
-        val repo = mockk<TransactionRepository>()
+        val repo = mockk<TransactionPersistencePort>()
         val handler = TransactionHandler(repo, fixedClock)
         val tx = Transaction.create(
             transactionId = "TX-1",
@@ -88,7 +88,7 @@ class TransactionHandlerTest {
 
     @Test
     fun `getByTransactionId — 없으면 DomainNotFoundException을 던진다`() {
-        val repo = mockk<TransactionRepository>()
+        val repo = mockk<TransactionPersistencePort>()
         val handler = TransactionHandler(repo, fixedClock)
         every { repo.findByTransactionId("MISSING") } returns null
 
