@@ -46,14 +46,17 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleBeanValidation(e: MethodArgumentNotValidException): ResponseEntity<ApiResponse<Nothing>> {
+        val allFields = e.bindingResult.fieldErrors.map { it.field }.distinct()
         if (log.isDebugEnabled) {
             log.debug(
                 "Bean validation failed: {}",
                 e.bindingResult.fieldErrors.joinToString(", ") { "${it.field}: ${it.defaultMessage}" },
             )
         }
-        val fields = e.bindingResult.fieldErrors.joinToString(", ") { it.field }
-        return build(HttpStatus.BAD_REQUEST, "다음 필드의 값이 유효하지 않습니다: $fields", "VALIDATION_FAILED")
+        val displayed = allFields.take(MAX_DISPLAYED_FIELDS)
+        val more = allFields.size - displayed.size
+        val fieldsText = if (more > 0) displayed.joinToString(", ") + " 외 ${more}개" else displayed.joinToString(", ")
+        return build(HttpStatus.BAD_REQUEST, "다음 필드의 값이 유효하지 않습니다: $fieldsText", "VALIDATION_FAILED")
     }
 
     @ExceptionHandler(Exception::class)
@@ -64,4 +67,8 @@ class GlobalExceptionHandler {
 
     private fun build(status: HttpStatus, message: String?, code: String): ResponseEntity<ApiResponse<Nothing>> =
         ResponseEntity.status(status).body(ApiResponse.error(message ?: status.reasonPhrase, code))
+
+    companion object {
+        private const val MAX_DISPLAYED_FIELDS = 3
+    }
 }
