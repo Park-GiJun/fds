@@ -7,6 +7,8 @@ import com.gijun.fds.transaction.application.port.outbound.CardEncryptor
 import com.gijun.fds.transaction.application.port.outbound.TransactionPersistencePort
 import com.gijun.fds.transaction.domain.enums.TransactionStatus
 import com.gijun.fds.transaction.domain.model.Transaction
+import com.gijun.fds.transaction.domain.vo.CountryCode
+import com.gijun.fds.transaction.domain.vo.CurrencyCode
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
@@ -79,10 +81,10 @@ class TransactionHandlerTest {
             plainCardNumber = "4111111111111111",
             encryptedCardNumber = "enc:4111111111111111",
             amount = BigDecimal.ONE,
-            currency = "USD",
+            currency = CurrencyCode("USD"),
             merchantName = "M",
             merchantCategory = "C",
-            country = "USA",
+            country = CountryCode("USA"),
             city = "NYC",
             latitude = 0.0,
             longitude = 0.0,

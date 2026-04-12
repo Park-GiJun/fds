@@ -5,6 +5,8 @@ import com.gijun.fds.common.exception.DomainNotFoundException
 import com.gijun.fds.transaction.application.port.inbound.GetTransactionUseCase
 import com.gijun.fds.transaction.application.port.inbound.RegisterTransactionUseCase
 import com.gijun.fds.transaction.domain.model.Transaction
+import com.gijun.fds.transaction.domain.vo.CountryCode
+import com.gijun.fds.transaction.domain.vo.CurrencyCode
 import com.gijun.fds.transaction.infrastructure.adapter.inbound.web.exception.GlobalExceptionHandler
 import io.mockk.every
 import io.mockk.mockk
@@ -61,10 +63,10 @@ class TransactionWebAdapterTest {
         plainCardNumber = "4111111111111111",
         encryptedCardNumber = "enc:4111111111111111",
         amount = BigDecimal("1000.00"),
-        currency = "USD",
+        currency = CurrencyCode("USD"),
         merchantName = "Amazon",
         merchantCategory = "RETAIL",
-        country = "USA",
+        country = CountryCode("USA"),
         city = "Seattle",
         latitude = 47.6,
         longitude = -122.3,

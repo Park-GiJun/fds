@@ -7,6 +7,8 @@ import com.gijun.fds.transaction.application.port.inbound.RegisterTransactionUse
 import com.gijun.fds.transaction.application.port.outbound.CardEncryptor
 import com.gijun.fds.transaction.application.port.outbound.TransactionPersistencePort
 import com.gijun.fds.transaction.domain.model.Transaction
+import com.gijun.fds.transaction.domain.vo.CountryCode
+import com.gijun.fds.transaction.domain.vo.CurrencyCode
 import org.springframework.transaction.annotation.Transactional
 import java.time.Clock
 import java.time.Instant
@@ -26,10 +28,10 @@ class TransactionHandler(
             plainCardNumber = command.cardNumber,
             encryptedCardNumber = encrypted,
             amount = command.amount,
-            currency = command.currency,
+            currency = CurrencyCode(command.currency),
             merchantName = command.merchantName,
             merchantCategory = command.merchantCategory,
-            country = command.country,
+            country = CountryCode(command.country),
             city = command.city,
             latitude = command.latitude,
             longitude = command.longitude,
