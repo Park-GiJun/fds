@@ -11,6 +11,11 @@
 - application은 port 인터페이스만 의존 (port 위치: `application.port.inbound`, `application.port.outbound`)
 - 도메인 모델은 HTTP 응답으로 직접 노출 금지 → infrastructure 계층에 Response DTO 분리
 - UseCase 구현체 네이밍: `{Resource}Handler` (Service, Impl 사용 금지)
+- UseCase와 DTO는 파일/패키지 분리: `application/port/inbound`에는 **인터페이스 계약만**, 입출력 DTO는 `application/dto/` 하위로
+  - `application/dto/command/{Action}{Resource}Command.kt` — 쓰기 입력 (Register/Update/Delete)
+  - `application/dto/query/{Action}{Resource}Query.kt` — 읽기 입력 (필요 시)
+  - `application/dto/result/{Resource}Result.kt` — 도메인 노출 회피용 출력 DTO (필요 시)
+  - UseCase 파일 내부에 data class 선언 금지
 - 아웃바운드 포트 네이밍: `{Domain}{Infra}Port` — `Infra`는 인프라 유형별 고정 접미어
   - Kafka/이벤트 → `Message` (e.g., `TransactionMessagePort`)
   - DB/JPA → `Persistence` (e.g., `TransactionPersistencePort`)
