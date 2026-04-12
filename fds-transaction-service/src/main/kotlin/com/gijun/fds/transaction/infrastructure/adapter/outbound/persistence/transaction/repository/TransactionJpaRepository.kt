@@ -4,4 +4,6 @@ import com.gijun.fds.transaction.infrastructure.adapter.outbound.persistence.tra
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface TransactionJpaRepository : JpaRepository<TransactionEntity, Long> {
+    fun findByTransactionId(transactionId: String): TransactionEntity?
+    fun existsByTransactionId(transactionId: String): Boolean
 }
