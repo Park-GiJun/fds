@@ -19,6 +19,13 @@
 - non-const val은 camelCase, const val만 SCREAMING_SNAKE_CASE
 - 한국어 커밋 메시지 사용
 
+## Git 브랜치 규칙
+- **코드 변경 후 commit/push 시 반드시 prefix가 적용된 브랜치에서 작업해야 한다. master 직접 push 금지.**
+- 브랜치 prefix: `feat/`, `fix/`, `refactor/`, `perf/`, `test/`, `security/`, `chore/`, `docs/`
+- 브랜치 생성: `/create-branch` 또는 `/create-issue-branch` 사용
+- 워크플로우: 브랜치 생성 → 코딩 → `/commit` → `/ship` (PR → merge)
+- 문서(doc/)만 변경하는 경우도 `docs/` prefix 브랜치 사용
+
 ## 커스텀 커맨드
 
 ### `/init-review` — 초기화 (프로젝트 시작 시 1회)
