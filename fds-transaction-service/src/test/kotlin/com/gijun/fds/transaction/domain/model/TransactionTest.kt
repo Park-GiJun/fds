@@ -22,6 +22,7 @@ class TransactionTest {
         transactionId = "tx-001",
         userId = "USER_00001",
         maskedCardNumber = "******0001",
+        encryptedCardNumber = "enc-fixture",
         amount = BigDecimal(50000),
         currency = CurrencyCode("KRW"),
         merchantName = "스타벅스",
@@ -175,7 +176,8 @@ class TransactionTest {
     fun `create 팩토리로 생성 시 maskedCardNumber가 자동 생성된다`() {
         val tx = Transaction.create(
             transactionId = "tx-002", userId = "USER_00002",
-            cardNumber = "4111222233334444",
+            plainCardNumber = "4111222233334444",
+            encryptedCardNumber = "enc-fixture",
             amount = BigDecimal(10000), currency = "KRW",
             merchantName = "테스트", merchantCategory = "TEST",
             country = "KOR", city = "서울",

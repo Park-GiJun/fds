@@ -3,6 +3,7 @@ package com.gijun.fds.transaction.application.handler
 import com.gijun.fds.common.exception.DomainAlreadyExistsException
 import com.gijun.fds.common.exception.DomainNotFoundException
 import com.gijun.fds.transaction.application.dto.command.RegisterTransactionCommand
+import com.gijun.fds.transaction.application.port.outbound.CardEncryptor
 import com.gijun.fds.transaction.application.port.outbound.TransactionPersistencePort
 import com.gijun.fds.transaction.domain.enums.TransactionStatus
 import com.gijun.fds.transaction.domain.model.Transaction
@@ -23,6 +24,10 @@ class TransactionHandlerTest {
     private val fixedInstant: Instant = Instant.parse("2026-04-12T00:00:00Z")
     private val fixedClock: Clock = Clock.fixed(fixedInstant, ZoneOffset.UTC)
 
+    private fun encryptor(): CardEncryptor = mockk<CardEncryptor>().also {
+        every { it.encrypt(any()) } answers { "enc:${firstArg<String>()}" }
+    }
+
     private fun command(id: String = "TX-001"): RegisterTransactionCommand = RegisterTransactionCommand(
         transactionId = id,
         userId = "U-1",
@@ -40,9 +45,9 @@ class TransactionHandlerTest {
     @Test
     fun `register — 신규 거래를 저장하고 저장된 도메인을 반환한다`() {
         val repo = mockk<TransactionPersistencePort>()
-        val handler = TransactionHandler(repo, fixedClock)
+        val handler = TransactionHandler(repo, encryptor(), fixedClock)
         val saved = slot<Transaction>()
-        every { repo.save(capture(saved), any()) } answers { saved.captured }
+        every { repo.save(capture(saved)) } answers { saved.captured }
 
         val result = handler.register(command())
 
@@ -51,14 +56,15 @@ class TransactionHandlerTest {
         result.createdAt shouldBe fixedInstant
         result.updatedAt shouldBe fixedInstant
         result.maskedCardNumber shouldBe "411111******1111"
-        verify(exactly = 1) { repo.save(any(), any()) }
+        result.encryptedCardNumber shouldBe "enc:4111111111111111"
+        verify(exactly = 1) { repo.save(any()) }
     }
 
     @Test
     fun `register — 어댑터가 DomainAlreadyExistsException을 던지면 그대로 전파한다`() {
         val repo = mockk<TransactionPersistencePort>()
-        val handler = TransactionHandler(repo, fixedClock)
-        every { repo.save(any(), any()) } throws DomainAlreadyExistsException("이미 등록된 거래입니다: TX-DUP")
+        val handler = TransactionHandler(repo, encryptor(), fixedClock)
+        every { repo.save(any()) } throws DomainAlreadyExistsException("이미 등록된 거래입니다: TX-DUP")
 
         assertThrows<DomainAlreadyExistsException> { handler.register(command("TX-DUP")) }
     }
@@ -66,11 +72,12 @@ class TransactionHandlerTest {
     @Test
     fun `getByTransactionId — 존재하면 도메인을 반환한다`() {
         val repo = mockk<TransactionPersistencePort>()
-        val handler = TransactionHandler(repo, fixedClock)
+        val handler = TransactionHandler(repo, encryptor(), fixedClock)
         val tx = Transaction.create(
             transactionId = "TX-1",
             userId = "U-1",
-            cardNumber = "4111111111111111",
+            plainCardNumber = "4111111111111111",
+            encryptedCardNumber = "enc:4111111111111111",
             amount = BigDecimal.ONE,
             currency = "USD",
             merchantName = "M",
@@ -89,7 +96,7 @@ class TransactionHandlerTest {
     @Test
     fun `getByTransactionId — 없으면 DomainNotFoundException을 던진다`() {
         val repo = mockk<TransactionPersistencePort>()
-        val handler = TransactionHandler(repo, fixedClock)
+        val handler = TransactionHandler(repo, encryptor(), fixedClock)
         every { repo.findByTransactionId("MISSING") } returns null
 
         assertThrows<DomainNotFoundException> { handler.getByTransactionId("MISSING") }

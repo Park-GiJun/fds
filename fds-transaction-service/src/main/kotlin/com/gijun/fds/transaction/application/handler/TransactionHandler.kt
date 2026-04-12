@@ -4,6 +4,7 @@ import com.gijun.fds.common.exception.DomainNotFoundException
 import com.gijun.fds.transaction.application.dto.command.RegisterTransactionCommand
 import com.gijun.fds.transaction.application.port.inbound.GetTransactionUseCase
 import com.gijun.fds.transaction.application.port.inbound.RegisterTransactionUseCase
+import com.gijun.fds.transaction.application.port.outbound.CardEncryptor
 import com.gijun.fds.transaction.application.port.outbound.TransactionPersistencePort
 import com.gijun.fds.transaction.domain.model.Transaction
 import org.springframework.transaction.annotation.Transactional
@@ -12,15 +13,18 @@ import java.time.Instant
 
 class TransactionHandler(
     private val transactionPersistencePort: TransactionPersistencePort,
+    private val cardEncryptor: CardEncryptor,
     private val clock: Clock,
 ) : RegisterTransactionUseCase, GetTransactionUseCase {
 
     @Transactional
     override fun register(command: RegisterTransactionCommand): Transaction {
+        val encrypted = cardEncryptor.encrypt(command.cardNumber)
         val transaction = Transaction.create(
             transactionId = command.transactionId,
             userId = command.userId,
-            cardNumber = command.cardNumber,
+            plainCardNumber = command.cardNumber,
+            encryptedCardNumber = encrypted,
             amount = command.amount,
             currency = command.currency,
             merchantName = command.merchantName,
@@ -31,7 +35,7 @@ class TransactionHandler(
             longitude = command.longitude,
             now = Instant.now(clock),
         )
-        return transactionPersistencePort.save(transaction, command.cardNumber)
+        return transactionPersistencePort.save(transaction)
     }
 
     @Transactional(readOnly = true)
