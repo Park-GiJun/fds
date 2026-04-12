@@ -2,7 +2,7 @@ package com.gijun.fds.transaction.infrastructure.adapter.outbound.persistence.tr
 
 import com.gijun.fds.common.exception.DomainAlreadyExistsException
 import com.gijun.fds.transaction.application.port.outbound.CardEncryptor
-import com.gijun.fds.transaction.application.port.outbound.TransactionRepository
+import com.gijun.fds.transaction.application.port.outbound.TransactionPersistencePort
 import com.gijun.fds.transaction.domain.model.Transaction
 import com.gijun.fds.transaction.infrastructure.adapter.outbound.persistence.transaction.entity.TransactionEntity
 import com.gijun.fds.transaction.infrastructure.adapter.outbound.persistence.transaction.repository.TransactionJpaRepository
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 class TransactionPersistenceAdapter(
     private val transactionJpaRepository: TransactionJpaRepository,
     private val cardEncryptor: CardEncryptor,
-) : TransactionRepository {
+) : TransactionPersistencePort {
 
     override fun save(transaction: Transaction): Transaction {
         val entity = TransactionEntity.fromDomain(
