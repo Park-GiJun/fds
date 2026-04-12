@@ -40,7 +40,7 @@
 - [x] 테스트 코드 48개 (fds-common, fds-generator, fds-gateway)
 
 ### 미구현
-- [ ] fds-transaction-service (비즈니스 로직 — Application.kt stub만 존재)
+- [ ] fds-transaction-service (일부 구현 — 2026-04-12 `TransactionWebAdapter` + application 계층 + persistence adapter 완성 / DetectionResult 적용 UseCase 미구현 / 테스트 0건 / 카드번호 암호화 미적용)
 - [ ] fds-detection-service (비즈니스 로직 — Application.kt stub만 존재)
 - [ ] fds-alert-service (비즈니스 로직 — Application.kt stub만 존재)
 - [ ] k6 부하 테스트
@@ -77,6 +77,16 @@
 - [ ] Generator SecurityConfig anyRequest denyAll 누락 — 미등록 경로 열림
 - [ ] Generator /actuator/** 전체 공개 → health/info만 축소 필요
 - [ ] SecurityConfig 통합 테스트 부재 — 보안 회귀 위험
+
+### Critical (2026-04-12 8cfdaae 리뷰 신규 — ⚠️ master 반영됨)
+- [ ] **카드번호 DB 평문 저장**: `TransactionPersistenceAdapter.save`가 `encryptedCardNumber = transaction.cardNumber`로 평문 저장. 컬럼명 `encrypted_card_number`로 위장돼 있어 감사 치명적. PCI-DSS 3.4 위반. KMS 기반 `CardEncryptor` 아웃포트 신설 필수. **프로덕션 배포 차단.**
+
+### High (2026-04-12 8cfdaae 리뷰 신규)
+- [ ] Domain 예외 → HTTP 매핑 부재 (`@RestControllerAdvice` 없음) — `DomainNotFoundException`/`DomainAlreadyExistsException` 모두 500 반환
+- [ ] `TransactionWebAdapter`/`TransactionHandler`/`TransactionPersistenceAdapter` 테스트 0건
+- [ ] `latitude`/`longitude` 범위 검증 없음 — Geo Velocity 규칙 오탐/미탐 유발
+- [ ] 요청 바디/예외 로그 `cardNumber` 마스킹 정책 미수립 (Logback Filter + MDC)
+- [ ] `@Transactional` 위치가 infrastructure adapter — 복수 adapter 합성 전 application 계층으로 이동 필요
 
 ### High (2026-04-12 Config fallback 제거 리뷰 신규)
 - [ ] Config Server + Eureka SPOF — fds-eureka-server 단일 노드 장애 시 전 서비스 기동 불가, 운영 전환 전 분리 필수
@@ -117,11 +127,12 @@
 ## 반복 실수 패턴
 (리뷰에서 2회 이상 지적된 항목)
 
-- **카드번호 평문 전송**: Baseline SEC-001 + 3회 리뷰 → 2026-04-12 마스킹 + PCI-DSS 형식 + CardNumber VO. ✅ **완전 해결.**
-- **ConcurrentHashMap 무한 증가**: Baseline PERF-001 + 2회 리뷰 → Caffeine + CAS. ✅ **해결.** (over-refill race는 Medium Tech Debt)
-- **인증/보안 설계 후순위화**: 3회 반복(Baseline → 1차 리뷰 → 2차 리뷰). BCrypt/엔드포인트 인증으로 대폭 개선. ⚠️ 단, Generator denyAll 누락 잔존.
-- **보안 컴포넌트 무테스트**: SecurityConfig 2개 작성 후 테스트 0개. 2차 리뷰에서 지적. ⚠️ 신규 패턴.
-- **CONFIG_PASSWORD 기본값 미제거**: 2차 리뷰 + Config fallback 제거 리뷰 2회 지적. `config-secret` 기본값이 운영에 노출될 위험. ⚠️ 반복 실수.
+- **카드번호 평문 취급**: Baseline SEC-001 + 4회 리뷰. 전송/마스킹/VO는 해결됐으나 2026-04-12 8cfdaae 리뷰에서 **저장 경로 평문(encrypted_* 컬럼에 평문 유입)** 으로 축 이동 재발. `doc/lessons/card-number-handling.md` 참조. ⚠️ **미해결 — 축 이동형 재발**.
+- **ConcurrentHashMap 무한 증가**: Baseline PERF-001 + 2회 리뷰 → Caffeine + CAS. ✅ **해결.**
+- **인증/보안 설계 후순위화**: 3회 반복. BCrypt/엔드포인트 인증으로 대폭 개선. ⚠️ Generator denyAll 누락 잔존.
+- **신규 계층 테스트 0건**: "보안 컴포넌트 무테스트"(2차 리뷰)로 최초 등록 → 8cfdaae에서 application/infrastructure 전반으로 확장 (`TransactionHandler`, `TransactionPersistenceAdapter`, `TransactionWebAdapter` 모두 테스트 없음). ⚠️ **패턴 확장**.
+- **CONFIG_PASSWORD 기본값 미제거**: 2회 반복. ⚠️ 반복 실수.
+- **메모리 문서 표류**: `review-checklist.md`의 UseCase 구현체 명명이 `{Resource}Service`로 남아있으나 현재 CLAUDE.md는 `{Resource}Handler`. 컨벤션 전환 시 메모리 동기화 누락. ⚠️ 신규 패턴.
 
 ## 미확정 사항 (팀 합의 완료/필요)
 - [x] in-port 패키지 위치: `application.port.in` 확정 (2026-04-12)
