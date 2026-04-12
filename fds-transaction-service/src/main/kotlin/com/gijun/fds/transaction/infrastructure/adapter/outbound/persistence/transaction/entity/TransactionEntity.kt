@@ -3,6 +3,8 @@ package com.gijun.fds.transaction.infrastructure.adapter.outbound.persistence.tr
 import com.gijun.fds.common.domain.RiskLevel
 import com.gijun.fds.transaction.domain.model.Transaction
 import com.gijun.fds.transaction.domain.enums.TransactionStatus
+import com.gijun.fds.transaction.domain.vo.CountryCode
+import com.gijun.fds.transaction.domain.vo.CurrencyCode
 import jakarta.persistence.*
 import java.math.BigDecimal
 import java.time.Instant
@@ -72,10 +74,10 @@ class TransactionEntity(
         userId = userId,
         maskedCardNumber = maskedCardNumber,
         amount = amount,
-        currency = currency,
+        currency = CurrencyCode(currency),
         merchantName = merchantName,
         merchantCategory = merchantCategory,
-        country = country,
+        country = CountryCode(country),
         city = city,
         latitude = latitude,
         longitude = longitude,
@@ -100,10 +102,10 @@ class TransactionEntity(
             encryptedCardNumber = encryptedCardNumber,
             maskedCardNumber = domain.maskedCardNumber,
             amount = domain.amount,
-            currency = domain.currency,
+            currency = domain.currency.value,
             merchantName = domain.merchantName,
             merchantCategory = domain.merchantCategory,
-            country = domain.country,
+            country = domain.country.value,
             city = domain.city,
             latitude = domain.latitude,
             longitude = domain.longitude,

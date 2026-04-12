@@ -3,6 +3,8 @@ package com.gijun.fds.transaction.domain.model
 import com.gijun.fds.common.domain.RiskLevel
 import com.gijun.fds.common.security.CardMasking
 import com.gijun.fds.transaction.domain.enums.TransactionStatus
+import com.gijun.fds.transaction.domain.vo.CountryCode
+import com.gijun.fds.transaction.domain.vo.CurrencyCode
 import java.math.BigDecimal
 import java.time.Instant
 
@@ -11,10 +13,10 @@ data class Transaction(
     val userId: String,
     val maskedCardNumber: String,
     val amount: BigDecimal,
-    val currency: String,
+    val currency: CurrencyCode,
     val merchantName: String,
     val merchantCategory: String,
-    val country: String,
+    val country: CountryCode,
     val city: String,
     val latitude: Double,
     val longitude: Double,
@@ -70,9 +72,9 @@ data class Transaction(
         ) = Transaction(
             transactionId = transactionId, userId = userId,
             maskedCardNumber = CardMasking.mask(cardNumber),
-            amount = amount, currency = currency,
+            amount = amount, currency = CurrencyCode(currency),
             merchantName = merchantName, merchantCategory = merchantCategory,
-            country = country, city = city,
+            country = CountryCode(country), city = city,
             latitude = latitude, longitude = longitude,
             createdAt = now, updatedAt = now,
         )
