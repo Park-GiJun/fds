@@ -23,25 +23,23 @@ data class TransactionResponse(
     val riskScore: Int?,
     val createdAt: Instant,
     val updatedAt: Instant,
-) {
-    companion object {
-        fun from(domain: Transaction): TransactionResponse = TransactionResponse(
-            transactionId = domain.transactionId,
-            userId = domain.userId,
-            maskedCardNumber = domain.maskedCardNumber,
-            amount = domain.amount,
-            currency = domain.currency,
-            merchantName = domain.merchantName,
-            merchantCategory = domain.merchantCategory,
-            country = domain.country,
-            city = domain.city,
-            latitude = domain.latitude,
-            longitude = domain.longitude,
-            status = domain.status,
-            riskLevel = domain.riskLevel,
-            riskScore = domain.riskScore,
-            createdAt = domain.createdAt,
-            updatedAt = domain.updatedAt,
-        )
-    }
-}
+)
+
+fun Transaction.toResponse(): TransactionResponse = TransactionResponse(
+    transactionId = transactionId,
+    userId = userId,
+    maskedCardNumber = maskedCardNumber,
+    amount = amount,
+    currency = currency,
+    merchantName = merchantName,
+    merchantCategory = merchantCategory,
+    country = country,
+    city = city,
+    latitude = latitude,
+    longitude = longitude,
+    status = status,
+    riskLevel = riskLevel,
+    riskScore = riskScore,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+)
