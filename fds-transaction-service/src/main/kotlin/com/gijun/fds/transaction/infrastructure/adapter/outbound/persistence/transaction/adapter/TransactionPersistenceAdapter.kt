@@ -8,7 +8,6 @@ import com.gijun.fds.transaction.infrastructure.adapter.outbound.persistence.tra
 import com.gijun.fds.transaction.infrastructure.adapter.outbound.persistence.transaction.repository.TransactionJpaRepository
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
 
 @Component
 class TransactionPersistenceAdapter(
@@ -16,7 +15,6 @@ class TransactionPersistenceAdapter(
     private val cardEncryptor: CardEncryptor,
 ) : TransactionRepository {
 
-    @Transactional
     override fun save(transaction: Transaction): Transaction {
         val entity = TransactionEntity.fromDomain(
             transaction,
@@ -29,11 +27,9 @@ class TransactionPersistenceAdapter(
         }
     }
 
-    @Transactional(readOnly = true)
     override fun findByTransactionId(transactionId: String): Transaction? =
         transactionJpaRepository.findByTransactionId(transactionId)?.toDomain()
 
-    @Transactional(readOnly = true)
     override fun existsByTransactionId(transactionId: String): Boolean =
         transactionJpaRepository.existsByTransactionId(transactionId)
 }
